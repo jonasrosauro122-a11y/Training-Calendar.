@@ -3,25 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAVA Classroom - VA Training Calendar</title>
-  
-  <!-- Fonts & Icons -->
+  <title>LAVA Classroom – 15-Day VA Training Schedule</title>
+
+  <!-- Google Fonts & FontAwesome Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     :root {
       --primary-red: #A00000;
-      --primary-dark: #121212;
-      --bg-light: #F4F6F9;
+      --primary-red-hover: #800000;
+      --dark-header: #121212;
+      --bg-body: #F4F6F9;
       --card-bg: #FFFFFF;
       --text-main: #1F2937;
       --text-muted: #6B7280;
       --border-color: #E5E7EB;
-      --green-completed: #10B981;
-      --blue-active: #2563EB;
+      --status-completed: #10B981;
+      --status-active: #A00000;
+      --status-pending: #9CA3AF;
       --radius-lg: 16px;
       --radius-md: 10px;
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
     }
 
@@ -33,227 +36,334 @@
     }
 
     body {
-      background-color: var(--bg-light);
+      background-color: var(--bg-body);
       color: var(--text-main);
-      padding: 30px 20px;
-      display: flex;
-      justify-content: center;
+      padding: 24px;
+      min-height: 100vh;
     }
 
-    .calendar-container {
-      width: 100%;
-      max-width: 1000px;
-      background: var(--card-bg);
+    .portal-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* HEADER BANNER */
+    .header-banner {
+      background: var(--dark-header);
+      color: #FFFFFF;
       border-radius: var(--radius-lg);
+      padding: 24px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
       box-shadow: var(--shadow-md);
-      border: 1px solid var(--border-color);
+      position: relative;
       overflow: hidden;
     }
 
-    /* CALENDAR HEADER */
-    .calendar-header {
-      background: var(--primary-dark);
-      color: #FFFFFF;
-      padding: 24px 30px;
+    .header-banner::after {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 180px;
+      height: 180px;
+      background: var(--primary-red);
+      filter: blur(70px);
+      opacity: 0.4;
+    }
+
+    .brand-section {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
       gap: 16px;
+      z-index: 2;
     }
 
-    .va-profile-brief {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .va-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      border: 2px solid var(--primary-red);
-      object-fit: cover;
-    }
-
-    .va-info h2 {
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .va-info p {
-      font-size: 12px;
-      color: #9CA3AF;
-    }
-
-    .month-navigation {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .month-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .nav-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: #FFFFFF;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      cursor: pointer;
+    .logo-badge {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-red);
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 22px;
+      color: #FFF;
+      box-shadow: 0 4px 12px rgba(160, 0, 0, 0.4);
+    }
+
+    .brand-title h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title h1 span { color: var(--primary-red); }
+    .brand-title p { font-size: 12px; color: #9CA3AF; }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+    }
+
+    .view-toggle-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       transition: all 0.2s;
     }
 
-    .nav-btn:hover {
+    .view-toggle-btn.active, .view-toggle-btn:hover {
       background: var(--primary-red);
+      border-color: var(--primary-red);
     }
 
-    /* LEGEND & SHIFT BAR */
-    .calendar-toolbar {
-      padding: 16px 30px;
-      background: #FAFAFA;
-      border-bottom: 1px solid var(--border-color);
+    /* TOOLBAR & SEARCH */
+    .toolbar-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 16px 24px;
+      border: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
-      font-size: 12px;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
     }
 
-    .shift-hours {
-      font-weight: 600;
-      color: var(--text-muted);
+    .search-input-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-body);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      width: 100%;
+      max-width: 320px;
     }
 
-    .shift-hours i {
-      color: var(--primary-red);
-      margin-right: 6px;
+    .search-input-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 13px;
+      width: 100%;
     }
 
-    .legend-group {
+    .legend-bar {
       display: flex;
       gap: 16px;
+      font-size: 12px;
+      font-weight: 600;
     }
 
-    .legend-item {
+    .legend-tag {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-weight: 600;
-      color: var(--text-muted);
     }
 
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.green { background: var(--status-completed); }
+    .dot.red { background: var(--status-active); }
+    .dot.gray { background: var(--status-pending); }
 
-    .dot.completed { background: var(--green-completed); }
-    .dot.current { background: var(--primary-red); }
-    .dot.upcoming { background: #D1D5DB; }
-
-    /* CALENDAR GRID */
-    .calendar-body {
-      padding: 24px 30px;
-    }
-
-    .weekdays-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      text-align: center;
-      font-weight: 700;
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .days-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
-    }
-
-    .day-cell {
-      min-height: 90px;
-      background: #F9FAFB;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 10px;
+    /* VIEW 1: MATRIX GRID VIEW (MODERN MATCH OF SPREADSHEET PHOTO) */
+    .schedule-matrix-view {
       display: flex;
       flex-direction: column;
+      gap: 24px;
+    }
+
+    .week-section {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .week-header {
+      background: #F9FAFB;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--dark-header);
+      display: flex;
       justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
+      align-items: center;
     }
 
-    .day-cell:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      border-color: var(--primary-red);
+    .days-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      divide-x: 1px solid var(--border-color);
     }
 
-    .day-cell.empty {
-      background: transparent;
-      border: none;
-      cursor: default;
+    .day-column {
+      padding: 16px;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: background 0.2s;
     }
 
-    .day-number {
+    .day-column:last-child { border-right: none; }
+    .day-column:hover { background: #FAFAFA; }
+
+    .day-col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .day-col-title {
       font-size: 13px;
       font-weight: 800;
     }
 
-    .event-badge {
+    .status-badge {
       font-size: 10px;
       font-weight: 700;
-      padding: 4px 6px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .status-badge.completed { background: #E6F4EA; color: #137333; }
+    .status-badge.active { background: #FCE8E6; color: var(--primary-red); }
+    .status-badge.pending { background: #F3F4F6; color: #6B7280; }
+
+    .module-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .module-chip {
+      background: var(--bg-body);
+      border: 1px solid var(--border-color);
       border-radius: 6px;
-      line-height: 1.2;
-      margin-top: 4px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    /* Day Status Styles */
-    .day-cell.completed {
-      border-top: 4px solid var(--green-completed);
-    }
-    .day-cell.completed .event-badge {
-      background: #E6F4EA;
-      color: #137333;
+    .module-chip:hover {
+      border-color: var(--primary-red);
+      color: var(--primary-red);
+      transform: translateX(2px);
     }
 
-    .day-cell.current {
-      border-top: 4px solid var(--primary-red);
-      background: #FFF5F5;
-    }
-    .day-cell.current .event-badge {
-      background: var(--primary-red);
-      color: #FFFFFF;
-    }
-
-    .day-cell.upcoming {
-      border-top: 4px solid #D1D5DB;
-    }
-    .day-cell.upcoming .event-badge {
-      background: #E5E7EB;
-      color: #4B5563;
+    .module-chip.lavau {
+      background: #FFFBEB;
+      border-color: #FCD34D;
+      color: #92400E;
+      text-align: center;
+      font-weight: 700;
     }
 
-    /* MODAL POPUP */
-    .modal-overlay {
+    .module-chip.highlight-green {
+      background: #ECFDF5;
+      border-color: #A7F3D0;
+      color: #065F46;
+    }
+
+    .module-chip.highlight-orange {
+      background: #FFF7ED;
+      border-color: #FDBA74;
+      color: #9A3412;
+    }
+
+    /* VIEW 2: CALENDAR GRID VIEW */
+    .calendar-grid-view {
+      display: none;
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cal-header-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      text-align: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .cal-days-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .cal-day-cell {
+      min-height: 120px;
+      background: #FAFAFA;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cal-day-cell:hover {
+      border-color: var(--primary-red);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-2px);
+    }
+
+    .cal-day-cell.completed { border-top: 4px solid var(--status-completed); }
+    .cal-day-cell.active { border-top: 4px solid var(--status-active); background: #FFF5F5; }
+    .cal-day-cell.pending { border-top: 4px solid var(--status-pending); }
+
+    .cal-day-num {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .cal-module-count {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* MODAL DRAWER */
+    .modal-backdrop {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -261,26 +371,26 @@
       padding: 20px;
     }
 
-    .modal-card {
+    .modal-box {
       background: #FFFFFF;
       width: 100%;
-      max-width: 450px;
+      max-width: 500px;
       border-radius: var(--radius-lg);
       padding: 24px;
-      box-shadow: var(--shadow-md);
       position: relative;
-      animation: modalSlide 0.2s ease;
+      box-shadow: var(--shadow-md);
+      animation: modalSlide 0.2s ease-out;
     }
 
     @keyframes modalSlide {
-      from { transform: translateY(10px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .modal-close {
+    .close-modal-btn {
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: 18px;
+      right: 18px;
       background: none;
       border: none;
       font-size: 18px;
@@ -288,253 +398,459 @@
       color: var(--text-muted);
     }
 
-    .modal-header-tag {
+    .modal-title-tag {
       font-size: 11px;
       font-weight: 800;
-      text-transform: uppercase;
       color: var(--primary-red);
-      margin-bottom: 4px;
-      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .modal-title {
-      font-size: 18px;
+    .modal-day-name {
+      font-size: 20px;
       font-weight: 800;
       margin-bottom: 12px;
     }
 
-    .modal-detail-list {
+    .modal-lesson-list {
       list-style: none;
-      margin: 14px 0;
-    }
-
-    .modal-detail-list li {
-      font-size: 13px;
-      padding: 6px 0;
-      border-bottom: 1px border-subtle var(--border-color);
+      margin: 16px 0;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
     }
 
-    .modal-detail-list li i {
+    .modal-lesson-list li {
+      background: var(--bg-body);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-lesson-list li i {
       color: var(--primary-red);
     }
 
-    .trainer-notes-box {
-      background: #F9FAFB;
-      padding: 12px;
-      border-radius: var(--radius-md);
-      border-left: 3px solid var(--primary-red);
-      font-size: 12px;
-      margin-top: 14px;
-    }
-
-    .trainer-notes-box strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    @media (max-width: 768px) {
-      .days-grid {
-        gap: 6px;
+    @media (max-width: 1024px) {
+      .days-row, .cal-days-grid, .cal-header-row {
+        grid-template-columns: 1fr;
       }
-      .day-cell {
-        min-height: 70px;
-        padding: 6px;
-      }
-      .event-badge {
-        font-size: 9px;
-      }
+      .day-column { border-right: none; border-bottom: 1px solid var(--border-color); }
     }
   </style>
 </head>
 <body>
 
-  <div class="calendar-container">
-    
-    <!-- HEADER SECTION -->
-    <header class="calendar-header">
-      <div class="va-profile-brief">
-        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="John Doe" class="va-avatar">
-        <div class="va-info">
-          <h2>John Doe</h2>
-          <p><i class="fa-solid fa-graduation-cap"></i> Virtual Assistant in Training &bull; Apex Insurance</p>
+  <div class="portal-wrapper">
+
+    <!-- HEADER BANNER -->
+    <header class="header-banner">
+      <div class="brand-section">
+        <div class="logo-badge"><i class="fa-solid fa-volcano"></i></div>
+        <div class="brand-title">
+          <h1>LAVA <span>CLASSROOM</span></h1>
+          <p><i class="fa-solid fa-calendar-week"></i> Virtual Assistant Training Schedule Portal</p>
         </div>
       </div>
 
-      <div class="month-navigation">
-        <button class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
-        <span class="month-title">July / August 2026</span>
-        <button class="nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
+      <div class="header-controls">
+        <button class="view-toggle-btn active" id="btnMatrixView" onclick="switchView('matrix')">
+          <i class="fa-solid fa-table-cells"></i> Matrix View
+        </button>
+        <button class="view-toggle-btn" id="btnCalView" onclick="switchView('calendar')">
+          <i class="fa-regular fa-calendar-days"></i> Calendar View
+        </button>
       </div>
     </header>
 
-    <!-- SHIFT & LEGEND TOOLBAR -->
-    <div class="calendar-toolbar">
-      <div class="shift-hours">
-        <i class="fa-regular fa-clock"></i> Shift Schedule: <strong>8:00 AM – 5:00 PM EST</strong>
-      </div>
-      <div class="legend-group">
-        <span class="legend-item"><span class="dot completed"></span> Completed</span>
-        <span class="legend-item"><span class="dot current"></span> Active Day</span>
-        <span class="legend-item"><span class="dot upcoming"></span> Upcoming</span>
-      </div>
-    </div>
-
-    <!-- CALENDAR GRID BODY -->
-    <div class="calendar-body">
-      <!-- Weekday Labels -->
-      <div class="weekdays-grid">
-        <div>Sun</div>
-        <div>Mon</div>
-        <div>Tue</div>
-        <div>Wed</div>
-        <div>Thu</div>
-        <div>Fri</div>
-        <div>Sat</div>
+    <!-- SEARCH & LEGEND BAR -->
+    <div class="toolbar-card">
+      <div class="search-input-box">
+        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+        <input type="text" id="scheduleSearch" placeholder="Search lessons (e.g., Quoting, ACORD, Home)..." onkeyup="filterSchedule()">
       </div>
 
-      <!-- Days Grid -->
-      <div class="days-grid" id="calendarGrid">
-        <!-- Sun-Thu empty offset -->
-        <div class="day-cell empty"></div>
-        <div class="day-cell empty"></div>
-        <div class="day-cell empty"></div>
-        <div class="day-cell empty"></div>
-        <div class="day-cell empty"></div>
-
-        <!-- Day 1 -->
-        <div class="day-cell completed" onclick="openModal('Day 1', 'HR Contract & Orientation', 'Completed', 'July 17, 2026', 'HR Contract Signing, New Hire Orientation, Insurance Onboarding Meeting', 'John completed all HR onboarding tasks cleanly.')">
-          <span class="day-number">17</span>
-          <div class="event-badge">Day 1 &bull; HR</div>
-        </div>
-
-        <!-- Day 2 -->
-        <div class="day-cell completed" onclick="openModal('Day 2', 'VA Fundamentals & Ethics', 'Completed', 'July 18, 2026', 'Getting to Know You, Roles of LAVA VA, Standard Work Ethics, Lava U', 'Engaged actively in team ethics discussions.')">
-          <span class="day-number">18</span>
-          <div class="event-badge">Day 2 &bull; Ethics</div>
-        </div>
-
-        <!-- Day 3 -->
-        <div class="day-cell completed" onclick="openModal('Day 3', 'Insurance 101 & Policy Cycle', 'Completed', 'July 19, 2026', 'Insurance 101, Policy Cycle, Lava U Module', 'Passed Insurance 101 quiz with 95%.')">
-          <span class="day-number">19</span>
-          <div class="event-badge">Day 3 &bull; Ins 101</div>
-        </div>
-
-        <!-- Day 4 -->
-        <div class="day-cell completed" onclick="openModal('Day 4', 'Insurance Documents & Admin', 'Completed', 'July 20, 2026', 'Insurance Documents, Admin Tasks, Lava U', 'Handled document indexing simulations with zero errors.')">
-          <span class="day-number">20</span>
-          <div class="event-badge">Day 4 &bull; Admin</div>
-        </div>
-
-        <!-- Day 5 -->
-        <div class="day-cell completed" onclick="openModal('Day 5', 'English 101 & CSR Basics', 'Completed', 'July 21, 2026', 'English 101, Insurance CSR Basics, Lava U', 'Mock CSR call handling went smoothly.')">
-          <span class="day-number">21</span>
-          <div class="event-badge">Day 5 &bull; CSR</div>
-        </div>
-
-        <!-- Weekend -->
-        <div class="day-cell empty"></div>
-        <div class="day-cell empty"></div>
-
-        <!-- Day 6 -->
-        <div class="day-cell completed" onclick="openModal('Day 6', 'Home Insurance Deep Dive', 'Completed', 'July 24, 2026', 'Home Types, Coverages, Construction Knowledge', 'Scored 94% on Home Insurance Quiz.')">
-          <span class="day-number">24</span>
-          <div class="event-badge">Day 6 &bull; Home</div>
-        </div>
-
-        <!-- Day 7 -->
-        <div class="day-cell completed" onclick="openModal('Day 7', 'Auto Insurance & Fields', 'Completed', 'July 25, 2026', 'Auto Insurance Intro, Common Fields, Quoting', 'Grasped liability limits and collision details.')">
-          <span class="day-number">25</span>
-          <div class="event-badge">Day 7 &bull; Auto</div>
-        </div>
-
-        <!-- Day 8 (Current) -->
-        <div class="day-cell current" onclick="openModal('Day 8 (Active Today)', 'Quote Simulations & Dec Page', 'In Progress', 'July 28, 2026', 'Sample Home Dec Page Analysis, Home & Auto Quote Simulations', 'John showed strong understanding of Home Insurance. Practice needed on replacement cost calculations.')">
-          <span class="day-number">28</span>
-          <div class="event-badge">Day 8 &bull; Active</div>
-        </div>
-
-        <!-- Day 9 -->
-        <div class="day-cell upcoming" onclick="openModal('Day 9', 'Specialty Lines & Umbrella', 'Upcoming', 'July 29, 2026', 'Trailer, Boat & RV Overview, Umbrella Insurance', 'Upcoming lesson tomorrow.')">
-          <span class="day-number">29</span>
-          <div class="event-badge">Day 9 &bull; Specialty</div>
-        </div>
-
-        <!-- Day 10 -->
-        <div class="day-cell upcoming" onclick="openModal('Day 10', 'AMS, CRM & Carriers', 'Upcoming', 'July 30, 2026', 'AMS, CRM, Raters, Carrier Portals, Lava U', 'Scheduled for Thursday.')">
-          <span class="day-number">30</span>
-          <div class="event-badge">Day 10 &bull; Systems</div>
-        </div>
-
-        <!-- Review Day -->
-        <div class="day-cell upcoming" onclick="openModal('Week 2 Review', 'End of Week Practice', 'Upcoming', 'July 31, 2026', 'System practice and instructor Q&A', 'Catch-up & review session.')">
-          <span class="day-number">31</span>
-          <div class="event-badge">Review Day</div>
-        </div>
-
-        <!-- Weekend -->
-        <div class="day-cell empty"></div>
-
-        <!-- Aug Days -->
-        <div class="day-cell upcoming" onclick="openModal('Day 11', 'Commercial Lines & ACORD', 'Upcoming', 'August 2, 2026', 'Commercial Insurance, ACORD Forms, SOPs', 'Upcoming module.')">
-          <span class="day-number">Aug 2</span>
-          <div class="event-badge">Day 11 &bull; ACORD</div>
-        </div>
-
-        <div class="day-cell upcoming" onclick="openModal('Day 12', 'Comprehensive Review', 'Upcoming', 'August 3, 2026', 'Personal & Commercial Test Reviews', 'Upcoming module.')">
-          <span class="day-number">Aug 3</span>
-          <div class="event-badge">Day 12 &bull; Review</div>
-        </div>
-
-        <div class="day-cell upcoming" onclick="openModal('Day 13', 'Insurance Final Exam', 'Upcoming', 'August 4, 2026', 'Final Evaluation Exam', 'Upcoming module.')">
-          <span class="day-number">Aug 4</span>
-          <div class="event-badge">Day 13 &bull; Exam</div>
-        </div>
-
-        <div class="day-cell upcoming" onclick="openModal('Day 14', 'Lava U Completion', 'Upcoming', 'August 5, 2026', 'Final Certificate Submissions', 'Upcoming module.')">
-          <span class="day-number">Aug 5</span>
-          <div class="event-badge">Day 14 &bull; Lava U</div>
-        </div>
-
-        <div class="day-cell upcoming" onclick="openModal('Day 15', 'Recognition & Graduation', 'Upcoming', 'August 6, 2026', 'Recognition Ceremony & Certificate Awarding', 'Graduation Day!')">
-          <span class="day-number">Aug 6</span>
-          <div class="event-badge">Day 15 &bull; Grad!</div>
-        </div>
+      <div class="legend-bar">
+        <span class="legend-tag"><span class="dot green"></span> Completed (Days 1–7)</span>
+        <span class="legend-tag"><span class="dot red"></span> Active Today (Day 8)</span>
+        <span class="legend-tag"><span class="dot gray"></span> Pending (Days 9–15)</span>
       </div>
     </div>
+
+    <!-- VIEW 1: MATRIX VIEW (MATCHES SPREADSHEET PHOTO) -->
+    <main class="schedule-matrix-view" id="matrixView">
+
+      <!-- WEEK 1 -->
+      <section class="week-section">
+        <div class="week-header">
+          <span><i class="fa-solid fa-layer-group"></i> WEEK 1: Foundations & Core Concepts</span>
+          <span class="status-badge completed">Completed</span>
+        </div>
+        <div class="days-row">
+          <!-- Day 1 -->
+          <div class="day-column" onclick="openModal(1, 'Monday', 'Completed', ['HR Contract Signing', 'HR New Hire Orientation', 'Insurance Onboarding Meeting', 'Virtual Assistant Onboarding'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 1 (Mon)</span>
+              <span class="status-badge completed">Done</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">HR Contract Signing</div>
+              <div class="module-chip">HR New Hire Orientation</div>
+              <div class="module-chip highlight-green">Insurance Onboarding Meeting</div>
+              <div class="module-chip highlight-orange">Virtual Assistant Onboarding</div>
+            </div>
+          </div>
+
+          <!-- Day 2 -->
+          <div class="day-column" onclick="openModal(2, 'Tuesday', 'Completed', ['Getting to know you', 'Different Roles of a LAVA VA', 'Standard Work Ethics', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 2 (Tue)</span>
+              <span class="status-badge completed">Done</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Getting to know you</div>
+              <div class="module-chip">Different Roles of a LAVA VA</div>
+              <div class="module-chip">Standard Work Ethics</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 3 -->
+          <div class="day-column" onclick="openModal(3, 'Wednesday', 'Completed', ['Insurance 101', 'Policy Cycle', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 3 (Wed)</span>
+              <span class="status-badge completed">Done</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Insurance 101</div>
+              <div class="module-chip">Policy Cycle</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 4 -->
+          <div class="day-column" onclick="openModal(4, 'Thursday', 'Completed', ['Insurance Documents', 'Admin Task', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 4 (Thu)</span>
+              <span class="status-badge completed">Done</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Insurance Documents</div>
+              <div class="module-chip">Admin Task</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 5 -->
+          <div class="day-column" onclick="openModal(5, 'Friday', 'Completed', ['English 101', 'Insurance CSR', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 5 (Fri)</span>
+              <span class="status-badge completed">Done</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">English 101</div>
+              <div class="module-chip">Insurance CSR</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEEK 2 -->
+      <section class="week-section">
+        <div class="week-header">
+          <span><i class="fa-solid fa-layer-group"></i> WEEK 2: Personal Lines & Quoting Simulations</span>
+          <span class="status-badge active">In Progress (Day 8 Active)</span>
+        </div>
+        <div class="days-row">
+          <!-- Day 6 -->
+          <div class="day-column" onclick="openModal(6, 'Monday', 'Completed', ['Home Insurance Types', 'Coverages in Home Insurance', 'Home Construction Knowledge', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 6 (Mon)</span>
+              <span class="status-badge completed">Done</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Home Insurance Types</div>
+              <div class="module-chip">Coverages in Home Insurance</div>
+              <div class="module-chip">Home Construction Knowledge</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 7 -->
+          <div class="day-column" onclick="openModal(7, 'Tuesday', 'Completed', ['Intro to Auto Insurance', 'Common Fields You Will See When Quoting Home & Auto', 'Home and Auto Quoting', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 7 (Tue)</span>
+              <span class="status-badge completed">Done</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Intro to Auto Insurance</div>
+              <div class="module-chip">Common Fields You Will See When Quoting Home & Auto</div>
+              <div class="module-chip">Home and Auto Quoting</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 8 (Active) -->
+          <div class="day-column" style="background: #FFF5F5;" onclick="openModal(8, 'Wednesday (Today)', 'Active', ['Analyzing a Sample Home Dec Page', 'Analyzing a Sample Auto Dec Page', 'Home Quote Simulation', 'Auto Quote Simulation', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title" style="color: var(--primary-red);">Day 8 (Wed)</span>
+              <span class="status-badge active">Active</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Analyzing a Sample Home Dec Page</div>
+              <div class="module-chip">Analyzing a Sample Auto Dec Page</div>
+              <div class="module-chip">Home Quote Simulation</div>
+              <div class="module-chip">Auto Quote Simulation</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 9 -->
+          <div class="day-column" onclick="openModal(9, 'Thursday', 'Pending', ['Trailer Overview and Quoting', 'Boat & RV Overview and Quoting', 'Umbrella Insurance', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 9 (Thu)</span>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Trailer Overview and Quoting</div>
+              <div class="module-chip">Boat & RV Overview and Quoting</div>
+              <div class="module-chip">Umbrella Insurance</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 10 -->
+          <div class="day-column" onclick="openModal(10, 'Friday', 'Pending', ['AMS', 'CRM', 'Raters', 'Carriers', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 10 (Fri)</span>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">AMS</div>
+              <div class="module-chip">CRM</div>
+              <div class="module-chip">Raters</div>
+              <div class="module-chip">Carriers</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEEK 3 -->
+      <section class="week-section">
+        <div class="week-header">
+          <span><i class="fa-solid fa-layer-group"></i> WEEK 3: Commercial Lines & Final Evaluations</span>
+          <span class="status-badge pending">Upcoming</span>
+        </div>
+        <div class="days-row">
+          <!-- Day 11 -->
+          <div class="day-column" onclick="openModal(11, 'Monday', 'Pending', ['Personal/Commercial Insurance ACORD Forms', 'SOP', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 11 (Mon)</span>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Personal/Commercial Insurance ACORD Forms</div>
+              <div class="module-chip">SOP</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 12 -->
+          <div class="day-column" onclick="openModal(12, 'Tuesday', 'Pending', ['Personal Test/Review', 'Commercial Summative Test/Review', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 12 (Tue)</span>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Personal Test/Review</div>
+              <div class="module-chip">Commercial Summative Test/Review</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 13 -->
+          <div class="day-column" onclick="openModal(13, 'Wednesday', 'Pending', ['Insurance Final Exam', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 13 (Wed)</span>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip" style="font-weight: 800; color: var(--primary-red);">Insurance Final Exam</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 14 -->
+          <div class="day-column" onclick="openModal(14, 'Thursday', 'Pending', ['Lava U Completion', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 14 (Thu)</span>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip">Lava U Completion</div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+
+          <!-- Day 15 -->
+          <div class="day-column" onclick="openModal(15, 'Friday', 'Pending', ['Recognition with TL\'s and Trainers (Certificate)', 'Lava U'])">
+            <div class="day-col-header">
+              <span class="day-col-title">Day 15 (Fri)</span>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="module-card-list">
+              <div class="module-chip" style="background: #FEF3C7; color: #92400E; font-weight: 800;">
+                <i class="fa-solid fa-award"></i> Recognition with TL's and Trainers (Certificate)
+              </div>
+              <div class="module-chip lavau">Lava U</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- VIEW 2: CALENDAR VIEW -->
+    <section class="calendar-grid-view" id="calendarView">
+      <div class="cal-header-row">
+        <div>Monday</div>
+        <div>Tuesday</div>
+        <div>Wednesday</div>
+        <div>Thursday</div>
+        <div>Friday</div>
+      </div>
+
+      <div class="cal-days-grid">
+        <!-- Week 1 -->
+        <div class="cal-day-cell completed" onclick="openModal(1, 'Monday', 'Completed', ['HR Contract Signing', 'HR Orientation', 'Onboarding'])">
+          <span class="cal-day-num">Day 1</span>
+          <span class="cal-module-count">4 Modules</span>
+        </div>
+        <div class="cal-day-cell completed" onclick="openModal(2, 'Tuesday', 'Completed', ['Getting to know you', 'VA Roles', 'Work Ethics'])">
+          <span class="cal-day-num">Day 2</span>
+          <span class="cal-module-count">4 Modules</span>
+        </div>
+        <div class="cal-day-cell completed" onclick="openModal(3, 'Wednesday', 'Completed', ['Insurance 101', 'Policy Cycle'])">
+          <span class="cal-day-num">Day 3</span>
+          <span class="cal-module-count">3 Modules</span>
+        </div>
+        <div class="cal-day-cell completed" onclick="openModal(4, 'Thursday', 'Completed', ['Insurance Documents', 'Admin Task'])">
+          <span class="cal-day-num">Day 4</span>
+          <span class="cal-module-count">3 Modules</span>
+        </div>
+        <div class="cal-day-cell completed" onclick="openModal(5, 'Friday', 'Completed', ['English 101', 'Insurance CSR'])">
+          <span class="cal-day-num">Day 5</span>
+          <span class="cal-module-count">3 Modules</span>
+        </div>
+
+        <!-- Week 2 -->
+        <div class="cal-day-cell completed" onclick="openModal(6, 'Monday', 'Completed', ['Home Insurance Types', 'Coverages', 'Construction'])">
+          <span class="cal-day-num">Day 6</span>
+          <span class="cal-module-count">4 Modules</span>
+        </div>
+        <div class="cal-day-cell completed" onclick="openModal(7, 'Tuesday', 'Completed', ['Auto Intro', 'Common Fields', 'Quoting'])">
+          <span class="cal-day-num">Day 7</span>
+          <span class="cal-module-count">4 Modules</span>
+        </div>
+        <div class="cal-day-cell active" onclick="openModal(8, 'Wednesday (Today)', 'Active', ['Home Dec Page', 'Auto Dec Page', 'Quote Sims'])">
+          <span class="cal-day-num" style="color: var(--primary-red);">Day 8 (Active)</span>
+          <span class="cal-module-count">5 Modules</span>
+        </div>
+        <div class="cal-day-cell pending" onclick="openModal(9, 'Thursday', 'Pending', ['Trailer & Boat Quoting', 'Umbrella'])">
+          <span class="cal-day-num">Day 9</span>
+          <span class="cal-module-count">4 Modules</span>
+        </div>
+        <div class="cal-day-cell pending" onclick="openModal(10, 'Friday', 'Pending', ['AMS', 'CRM', 'Raters', 'Carriers'])">
+          <span class="cal-day-num">Day 10</span>
+          <span class="cal-module-count">5 Modules</span>
+        </div>
+
+        <!-- Week 3 -->
+        <div class="cal-day-cell pending" onclick="openModal(11, 'Monday', 'Pending', ['ACORD Forms', 'SOP'])">
+          <span class="cal-day-num">Day 11</span>
+          <span class="cal-module-count">3 Modules</span>
+        </div>
+        <div class="cal-day-cell pending" onclick="openModal(12, 'Tuesday', 'Pending', ['Personal Review', 'Commercial Review'])">
+          <span class="cal-day-num">Day 12</span>
+          <span class="cal-module-count">3 Modules</span>
+        </div>
+        <div class="cal-day-cell pending" onclick="openModal(13, 'Wednesday', 'Pending', ['Insurance Final Exam'])">
+          <span class="cal-day-num">Day 13</span>
+          <span class="cal-module-count">2 Modules</span>
+        </div>
+        <div class="cal-day-cell pending" onclick="openModal(14, 'Thursday', 'Pending', ['Lava U Completion'])">
+          <span class="cal-day-num">Day 14</span>
+          <span class="cal-module-count">2 Modules</span>
+        </div>
+        <div class="cal-day-cell pending" onclick="openModal(15, 'Friday', 'Pending', ['Recognition Ceremony & Certificate'])">
+          <span class="cal-day-num">Day 15</span>
+          <span class="cal-module-count">2 Modules</span>
+        </div>
+      </div>
+    </section>
+
   </div>
 
-  <!-- POPUP MODAL FOR LESSON DETAILS -->
-  <div class="modal-overlay" id="dayModal">
-    <div class="modal-card">
-      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-      <span class="modal-header-tag" id="modalTag">Day 8</span>
-      <h3 class="modal-title" id="modalTitle">Quote Simulations</h3>
-      
-      <ul class="modal-detail-list">
-        <li><i class="fa-regular fa-circle-check"></i> <strong>Status:</strong> <span id="modalStatus">In Progress</span></li>
-        <li><i class="fa-regular fa-calendar"></i> <strong>Scheduled Date:</strong> <span id="modalDate">July 28, 2026</span></li>
-        <li><i class="fa-solid fa-book-open"></i> <strong>Modules:</strong> <span id="modalLessons">Home & Auto Quotes</span></li>
+  <!-- MODAL DRAWER -->
+  <div class="modal-backdrop" id="dayModal">
+    <div class="modal-box">
+      <button class="close-modal-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      <span class="modal-title-tag" id="modalDayTag">Day 8</span>
+      <h2 class="modal-day-name" id="modalDayTitle">Wednesday Schedule</h2>
+
+      <p style="font-size: 12px; color: var(--text-muted);">Assigned Curriculum & Lessons:</p>
+      <ul class="modal-lesson-list" id="modalLessons">
+        <!-- Dynamic Insertion -->
       </ul>
 
-      <div class="trainer-notes-box">
-        <strong><i class="fa-solid fa-clipboard-user"></i> Trainer Remark:</strong>
-        <p id="modalNotes">John demonstrated excellent understanding of Home Insurance.</p>
+      <div style="background: #F9FAFB; padding: 12px; border-radius: 8px; border-left: 3px solid var(--primary-red); font-size: 12px; margin-top: 14px;">
+        <strong><i class="fa-solid fa-chalkboard-user"></i> Trainer Status:</strong>
+        <p id="modalStatusText">John completed these modules under supervisor review.</p>
       </div>
     </div>
   </div>
 
   <script>
-    function openModal(tag, title, status, date, lessons, notes) {
-      document.getElementById('modalTag').innerText = tag;
-      document.getElementById('modalTitle').innerText = title;
-      document.getElementById('modalStatus').innerText = status;
-      document.getElementById('modalDate').innerText = date;
-      document.getElementById('modalLessons').innerText = lessons;
-      document.getElementById('modalNotes').innerText = notes;
-      
+    // View Switcher Logic
+    function switchView(viewType) {
+      const matrix = document.getElementById('matrixView');
+      const calendar = document.getElementById('calendarView');
+      const btnMatrix = document.getElementById('btnMatrixView');
+      const btnCal = document.getElementById('btnCalView');
+
+      if (viewType === 'matrix') {
+        matrix.style.display = 'flex';
+        calendar.style.display = 'none';
+        btnMatrix.classList.add('active');
+        btnCal.classList.remove('active');
+      } else {
+        matrix.style.display = 'none';
+        calendar.style.display = 'block';
+        btnMatrix.classList.remove('active');
+        btnCal.classList.add('active');
+      }
+    }
+
+    // Modal Inspector
+    function openModal(dayNum, dayOfWeek, status, lessons) {
+      document.getElementById('modalDayTag').innerText = `Day ${dayNum} • ${status}`;
+      document.getElementById('modalDayTitle').innerText = `${dayOfWeek} Curriculum`;
+
+      const lessonListEl = document.getElementById('modalLessons');
+      lessonListEl.innerHTML = '';
+
+      lessons.forEach(lesson => {
+        const li = document.createElement('li');
+        li.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${lesson}`;
+        lessonListEl.appendChild(li);
+      });
+
       document.getElementById('dayModal').style.display = 'flex';
     }
 
@@ -542,12 +858,27 @@
       document.getElementById('dayModal').style.display = 'none';
     }
 
-    // Close on backdrop click
+    // Live Search Filter
+    function filterSchedule() {
+      const query = document.getElementById('scheduleSearch').value.toLowerCase();
+      const chips = document.querySelectorAll('.module-chip');
+
+      chips.forEach(chip => {
+        const text = chip.innerText.toLowerCase();
+        if (text.includes(query)) {
+          chip.style.opacity = '1';
+          chip.style.border = '1px solid var(--primary-red)';
+        } else {
+          chip.style.opacity = query === '' ? '1' : '0.2';
+          chip.style.border = '1px solid var(--border-color)';
+        }
+      });
+    }
+
+    // Close Modal on backdrop click
     window.onclick = function(e) {
       const modal = document.getElementById('dayModal');
-      if (e.target === modal) {
-        closeModal();
-      }
+      if (e.target === modal) closeModal();
     }
   </script>
 </body>
