@@ -3,1407 +3,552 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAVA Classroom – Client Training Progress Portal</title>
+  <title>LAVA Classroom - VA Training Calendar</title>
   
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Font Awesome Icons -->
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --primary-red: #A00000;
+      --primary-dark: #121212;
+      --bg-light: #F4F6F9;
+      --card-bg: #FFFFFF;
+      --text-main: #1F2937;
+      --text-muted: #6B7280;
+      --border-color: #E5E7EB;
+      --green-completed: #10B981;
+      --blue-active: #2563EB;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      padding: 30px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .calendar-container {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    /* CALENDAR HEADER */
+    .calendar-header {
+      background: var(--primary-dark);
+      color: #FFFFFF;
+      padding: 24px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .va-profile-brief {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .va-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-red);
+      object-fit: cover;
+    }
+
+    .va-info h2 {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .va-info p {
+      font-size: 12px;
+      color: #9CA3AF;
+    }
+
+    .month-navigation {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .month-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #FFFFFF;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--primary-red);
+    }
+
+    /* LEGEND & SHIFT BAR */
+    .calendar-toolbar {
+      padding: 16px 30px;
+      background: #FAFAFA;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 12px;
+    }
+
+    .shift-hours {
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .shift-hours i {
+      color: var(--primary-red);
+      margin-right: 6px;
+    }
+
+    .legend-group {
+      display: flex;
+      gap: 16px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.completed { background: var(--green-completed); }
+    .dot.current { background: var(--primary-red); }
+    .dot.upcoming { background: #D1D5DB; }
+
+    /* CALENDAR GRID */
+    .calendar-body {
+      padding: 24px 30px;
+    }
+
+    .weekdays-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .day-cell {
+      min-height: 90px;
+      background: #F9FAFB;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .day-cell:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-color: var(--primary-red);
+    }
+
+    .day-cell.empty {
+      background: transparent;
+      border: none;
+      cursor: default;
+    }
+
+    .day-number {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .event-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 6px;
+      border-radius: 6px;
+      line-height: 1.2;
+      margin-top: 4px;
+    }
+
+    /* Day Status Styles */
+    .day-cell.completed {
+      border-top: 4px solid var(--green-completed);
+    }
+    .day-cell.completed .event-badge {
+      background: #E6F4EA;
+      color: #137333;
+    }
+
+    .day-cell.current {
+      border-top: 4px solid var(--primary-red);
+      background: #FFF5F5;
+    }
+    .day-cell.current .event-badge {
+      background: var(--primary-red);
+      color: #FFFFFF;
+    }
+
+    .day-cell.upcoming {
+      border-top: 4px solid #D1D5DB;
+    }
+    .day-cell.upcoming .event-badge {
+      background: #E5E7EB;
+      color: #4B5563;
+    }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 450px;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      animation: modalSlide 0.2s ease;
+    }
+
+    @keyframes modalSlide {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .modal-header-tag {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--primary-red);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .modal-detail-list {
+      list-style: none;
+      margin: 14px 0;
+    }
+
+    .modal-detail-list li {
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px border-subtle var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-detail-list li i {
+      color: var(--primary-red);
+    }
+
+    .trainer-notes-box {
+      background: #F9FAFB;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--primary-red);
+      font-size: 12px;
+      margin-top: 14px;
+    }
+
+    .trainer-notes-box strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .days-grid {
+        gap: 6px;
+      }
+      .day-cell {
+        min-height: 70px;
+        padding: 6px;
+      }
+      .event-badge {
+        font-size: 9px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="app-container">
+  <div class="calendar-container">
     
-    <!-- FIXED SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-logo">
-          <i class="fa-solid fa-volcano"></i>
-        </div>
-        <div class="brand-text">
-          <h2>LAVA <span>CLASSROOM</span></h2>
-          <p>Training Portal</p>
+    <!-- HEADER SECTION -->
+    <header class="calendar-header">
+      <div class="va-profile-brief">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="John Doe" class="va-avatar">
+        <div class="va-info">
+          <h2>John Doe</h2>
+          <p><i class="fa-solid fa-graduation-cap"></i> Virtual Assistant in Training &bull; Apex Insurance</p>
         </div>
       </div>
 
-      <nav class="sidebar-menu">
-        <ul>
-          <li class="active" data-tab="dashboard">
-            <a href="#dashboard"><i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span></a>
-          </li>
-          <li data-tab="schedule">
-            <a href="#schedule"><i class="fa-solid fa-calendar-week"></i> <span>Training Schedule</span></a>
-          </li>
-          <li data-tab="timeline">
-            <a href="#timeline"><i class="fa-solid fa-timeline"></i> <span>Daily Progress</span></a>
-          </li>
-          <li data-tab="quizzes">
-            <a href="#quizzes"><i class="fa-solid fa-graduation-cap"></i> <span>Quiz Scores</span></a>
-          </li>
-          <li data-tab="attendance">
-            <a href="#attendance"><i class="fa-solid fa-user-check"></i> <span>Attendance</span></a>
-          </li>
-          <li data-tab="trainer-notes">
-            <a href="#trainer-notes"><i class="fa-solid fa-clipboard-user"></i> <span>Trainer Notes</span></a>
-          </li>
-          <li data-tab="calendar">
-            <a href="#calendar"><i class="fa-regular fa-calendar-days"></i> <span>Calendar</span></a>
-          </li>
-          <li data-tab="documents">
-            <a href="#documents"><i class="fa-solid fa-file-lines"></i> <span>Documents</span></a>
-          </li>
-          <li data-tab="messages">
-            <a href="#messages"><i class="fa-solid fa-comments"></i> <span>Messages</span></a>
-          </li>
-          <li data-tab="profile">
-            <a href="#profile"><i class="fa-solid fa-user-gear"></i> <span>Profile</span></a>
-          </li>
-        </ul>
-      </nav>
-
-      <div class="sidebar-footer">
-        <a href="#logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+      <div class="month-navigation">
+        <button class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
+        <span class="month-title">July / August 2026</span>
+        <button class="nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
-    </aside>
+    </header>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="main-wrapper">
-      
-      <!-- TOP HEADER BAR -->
-      <header class="top-header">
-        <div class="header-left">
-          <button class="mobile-toggle" id="mobileToggle"><i class="fa-solid fa-bars"></i></button>
-          <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="globalSearch" placeholder="Search lessons, topics, or notes...">
-          </div>
+    <!-- SHIFT & LEGEND TOOLBAR -->
+    <div class="calendar-toolbar">
+      <div class="shift-hours">
+        <i class="fa-regular fa-clock"></i> Shift Schedule: <strong>8:00 AM – 5:00 PM EST</strong>
+      </div>
+      <div class="legend-group">
+        <span class="legend-item"><span class="dot completed"></span> Completed</span>
+        <span class="legend-item"><span class="dot current"></span> Active Day</span>
+        <span class="legend-item"><span class="dot upcoming"></span> Upcoming</span>
+      </div>
+    </div>
+
+    <!-- CALENDAR GRID BODY -->
+    <div class="calendar-body">
+      <!-- Weekday Labels -->
+      <div class="weekdays-grid">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+      </div>
+
+      <!-- Days Grid -->
+      <div class="days-grid" id="calendarGrid">
+        <!-- Sun-Thu empty offset -->
+        <div class="day-cell empty"></div>
+        <div class="day-cell empty"></div>
+        <div class="day-cell empty"></div>
+        <div class="day-cell empty"></div>
+        <div class="day-cell empty"></div>
+
+        <!-- Day 1 -->
+        <div class="day-cell completed" onclick="openModal('Day 1', 'HR Contract & Orientation', 'Completed', 'July 17, 2026', 'HR Contract Signing, New Hire Orientation, Insurance Onboarding Meeting', 'John completed all HR onboarding tasks cleanly.')">
+          <span class="day-number">17</span>
+          <div class="event-badge">Day 1 &bull; HR</div>
         </div>
 
-        <div class="header-right">
-          <!-- Notification Bell -->
-          <div class="notification-dropdown">
-            <button class="icon-btn" id="notifBtn">
-              <i class="fa-regular fa-bell"></i>
-              <span class="badge-dot"></span>
-            </button>
-            <div class="dropdown-menu" id="notifMenu">
-              <div class="dropdown-header">
-                <h4>Notifications</h4>
-                <span class="mark-read">Mark all as read</span>
-              </div>
-              <ul class="notif-list">
-                <li class="unread">
-                  <div class="notif-icon green"><i class="fa-solid fa-check"></i></div>
-                  <div class="notif-content">
-                    <p><strong>Day 8 Completed</strong></p>
-                    <small>Auto Quote Simulation passed</small>
-                    <span class="time">10 mins ago</span>
-                  </div>
-                </li>
-                <li class="unread">
-                  <div class="notif-icon red"><i class="fa-solid fa-comment-dots"></i></div>
-                  <div class="notif-content">
-                    <p><strong>Trainer Added Notes</strong></p>
-
-                    <small>Sarah Connor updated evaluation</small>
-                    <span class="time">1 hour ago</span>
-                  </div>
-                </li>
-                <li>
-                  <div class="notif-icon blue"><i class="fa-solid fa-upload"></i></div>
-                  <div class="notif-content">
-                    <p><strong>Quiz Uploaded</strong></p>
-                    <small>Home Insurance test score: 94%</small>
-                    <span class="time">Yesterday</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- User Profile Brief -->
-          <div class="user-profile">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Client Avatar" class="avatar">
-            <div class="user-info">
-              <span class="user-name">Sarah Jenkins</span>
-              <span class="agency-name">Apex Insurance Agency</span>
-            </div>
-          </div>
+        <!-- Day 2 -->
+        <div class="day-cell completed" onclick="openModal('Day 2', 'VA Fundamentals & Ethics', 'Completed', 'July 18, 2026', 'Getting to Know You, Roles of LAVA VA, Standard Work Ethics, Lava U', 'Engaged actively in team ethics discussions.')">
+          <span class="day-number">18</span>
+          <div class="event-badge">Day 2 &bull; Ethics</div>
         </div>
-      </header>
 
-      <!-- METRICS BANNER CARD -->
-      <section class="banner-card">
-        <div class="banner-content">
-          <div class="va-profile-summary">
-            <div class="va-avatar">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="VA Photo">
-              <span class="status-indicator online"></span>
-            </div>
-            <div class="va-details">
-              <div class="badge-row">
-                <span class="badge-tag"><i class="fa-solid fa-id-badge"></i> Assigned VA</span>
-                <span class="badge-tag accent"><i class="fa-solid fa-shield-halved"></i> Day 8 of 15</span>
-              </div>
-              <h1>John Doe</h1>
-              <p><i class="fa-solid fa-chalkboard-user"></i> Trainer: <strong>Sarah Connor</strong> &bull; Client: <strong>Apex Insurance Agency</strong></p>
-            </div>
-          </div>
-
-          <div class="banner-progress">
-            <div class="progress-info">
-              <span>Overall Training Progress</span>
-              <span class="progress-pct">53%</span>
-            </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 53%;"></div>
-            </div>
-            <div class="progress-meta">
-              <span><i class="fa-regular fa-calendar"></i> Grad Date: <strong>August 15, 2026</strong></span>
-              <span><i class="fa-solid fa-check-double"></i> 8 / 15 Days Complete</span>
-            </div>
-          </div>
+        <!-- Day 3 -->
+        <div class="day-cell completed" onclick="openModal('Day 3', 'Insurance 101 & Policy Cycle', 'Completed', 'July 19, 2026', 'Insurance 101, Policy Cycle, Lava U Module', 'Passed Insurance 101 quiz with 95%.')">
+          <span class="day-number">19</span>
+          <div class="event-badge">Day 3 &bull; Ins 101</div>
         </div>
-      </section>
 
-      <!-- TAB SECTIONS CONTAINER -->
-      <div class="tab-content-container">
-
-        <!-- 1. DASHBOARD TAB -->
-        <section id="tab-dashboard" class="tab-content active">
-          <!-- Stats Grid -->
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-icon red"><i class="fa-solid fa-book-bookmark"></i></div>
-              <div class="stat-info">
-                <h3>8 / 15</h3>
-                <p>Completed Lessons</p>
-                <small class="trend positive"><i class="fa-solid fa-arrow-trend-up"></i> On Track</small>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon dark"><i class="fa-solid fa-calendar-week"></i></div>
-              <div class="stat-info">
-                <h3>Week 2</h3>
-                <p>Current Phase</p>
-                <small class="subtext">Quoting & Carrier Tools</small>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon green"><i class="fa-solid fa-user-check"></i></div>
-              <div class="stat-info">
-                <h3>100%</h3>
-                <p>Attendance Rate</p>
-
-                <small class="trend positive"><i class="fa-solid fa-check"></i> Perfect Record</small>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon blue"><i class="fa-solid fa-award"></i></div>
-              <div class="stat-info">
-                <h3>93.4%</h3>
-                <p>Avg Quiz Score</p>
-                <small class="trend positive"><i class="fa-solid fa-star"></i> High Performer</small>
-              </div>
-            </div>
-          </div>
-
-          <!-- Dashboard Charts Grid -->
-          <div class="charts-grid">
-            <div class="chart-card">
-              <div class="card-header">
-                <h3>Weekly Progress Overview</h3>
-                <span class="card-subtitle">Daily completion efficiency</span>
-              </div>
-              <div class="chart-body">
-                <canvas id="weeklyProgressChart"></canvas>
-              </div>
-            </div>
-
-            <div class="chart-card">
-              <div class="card-header">
-                <h3>Quiz Performance</h3>
-                <span class="card-subtitle">Module exam scores (%)</span>
-              </div>
-              <div class="chart-body">
-                <canvas id="quizChart"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <!-- Quick Preview Grid -->
-          <div class="dashboard-bottom-grid">
-            <!-- Recent Trainer Notes -->
-            <div class="card-box">
-              <div class="card-header flex-between">
-                <h3><i class="fa-solid fa-pen-to-square"></i> Latest Trainer Feedback</h3>
-                <button class="view-all-btn" onclick="switchTab('trainer-notes')">View All</button>
-              </div>
-              <div class="card-content">
-                <div class="trainer-note-item">
-                  <div class="note-meta">
-                    <span class="day-badge">Day 8</span>
-                    <span class="note-date">July 28, 2026</span>
-                  </div>
-                  <p class="note-text">"John demonstrated excellent understanding of Home Insurance. Needs additional practice with replacement cost calculations."</p>
-                  <div class="pill-group">
-                    <span class="pill green">Participation: Excellent</span>
-                    <span class="pill green">Communication: Very Good</span>
-                    <span class="pill yellow">Confidence: Improving</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Upcoming Milestones -->
-            <div class="card-box">
-              <div class="card-header flex-between">
-                <h3><i class="fa-solid fa-flag-checkered"></i> Next Milestones</h3>
-                <button class="view-all-btn" onclick="switchTab('schedule')">Schedule</button>
-              </div>
-              <div class="card-content">
-                <ul class="milestone-list">
-                  <li class="milestone-item current">
-                    <div class="milestone-icon"><i class="fa-solid fa-play"></i></div>
-                    <div class="milestone-info">
-                      <h4>Day 8: Home & Auto Quote Simulation</h4>
-                      <span>Today's Active Module</span>
-                    </div>
-                  </li>
-                  <li class="milestone-item">
-                    <div class="milestone-icon"><i class="fa-solid fa-clock"></i></div>
-                    <div class="milestone-info">
-                      <h4>Day 9: Trailer, Boat, RV & Umbrella</h4>
-                      <span>Upcoming Tomorrow</span>
-                    </div>
-                  </li>
-                  <li class="milestone-item">
-                    <div class="milestone-icon"><i class="fa-solid fa-clock"></i></div>
-                    <div class="milestone-info">
-                      <h4>Day 10: AMS, CRM, Raters & Carriers</h4>
-                      <span>End of Week 2 Test</span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 2. TRAINING SCHEDULE TAB -->
-        <section id="tab-schedule" class="tab-content">
-          <div class="section-title-bar">
-            <div>
-              <h2>Training Curriculum Schedule</h2>
-              <p>Detailed 3-week learning pathway with daily lesson breakdowns.</p>
-            </div>
-            
-            <!-- Controls Bar -->
-            <div class="schedule-controls">
-              <div class="filter-group">
-                <button class="filter-btn active" data-filter="all">All Weeks</button>
-                <button class="filter-btn" data-filter="week1">Week 1</button>
-                <button class="filter-btn" data-filter="week2">Week 2</button>
-                <button class="filter-btn" data-filter="week3">Week 3</button>
-              </div>
-              <div class="status-filter">
-                <select id="statusFilterSelect">
-                  <option value="all">All Statuses</option>
-                  <option value="Completed">Completed</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Pending">Pending</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="schedule-accordion-wrapper" id="scheduleAccordion">
-            <!-- Content dynamic / static template below -->
-
-            <!-- WEEK 1 -->
-            <div class="week-heading-divider" data-week="week1">
-              <span><i class="fa-solid fa-cubes"></i> WEEK 1: Foundations & Core Concepts</span>
-            </div>
-
-            <!-- Day 1 -->
-            <div class="day-card completed" data-week="week1" data-status="Completed">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 1</span>
-                  <span class="status-badge completed"><i class="fa-solid fa-circle-check"></i> Completed</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Onboarding & Orientation</h4>
-                  <ul class="lesson-tags">
-                    <li>HR Contract Signing</li>
-                    <li>HR New Hire Orientation</li>
-                    <li>Insurance Onboarding Meeting</li>
-                    <li>Virtual Assistant Onboarding</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">100%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar-check"></i> July 17, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <h5><i class="fa-solid fa-clipboard"></i> Trainer Remarks:</h5>
-                  <p>John successfully completed all HR onboarding procedures and demonstrated great enthusiasm during the orientation call.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 2 -->
-            <div class="day-card completed" data-week="week1" data-status="Completed">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 2</span>
-                  <span class="status-badge completed"><i class="fa-solid fa-circle-check"></i> Completed</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>VA Fundamentals & Ethics</h4>
-                  <ul class="lesson-tags">
-                    <li>Getting to Know You</li>
-                    <li>Different Roles of a LAVA VA</li>
-                    <li>Standard Work Ethics</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">100%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar-check"></i> July 18, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <h5><i class="fa-solid fa-clipboard"></i> Trainer Remarks:</h5>
-                  <p>Engaged actively in team ethics discussions. Completed Lava U foundational modules ahead of schedule.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 3 -->
-            <div class="day-card completed" data-week="week1" data-status="Completed">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 3</span>
-                  <span class="status-badge completed"><i class="fa-solid fa-circle-check"></i> Completed</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Insurance Fundamentals</h4>
-                  <ul class="lesson-tags">
-                    <li>Insurance 101</li>
-                    <li>Policy Cycle</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">100%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar-check"></i> July 19, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <h5><i class="fa-solid fa-clipboard"></i> Trainer Remarks:</h5>
-                  <p>Passed Insurance 101 quiz with a score of 95%. Excellent grasp of the life cycle of a policy.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 4 -->
-            <div class="day-card completed" data-week="week1" data-status="Completed">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 4</span>
-                  <span class="status-badge completed"><i class="fa-solid fa-circle-check"></i> Completed</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Documentation & Admin Workflow</h4>
-                  <ul class="lesson-tags">
-                    <li>Insurance Documents</li>
-                    <li>Admin Task</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">100%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar-check"></i> July 20, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <h5><i class="fa-solid fa-clipboard"></i> Trainer Remarks:</h5>
-                  <p>Handled document indexing simulations with zero errors. Swift speed on administrative tasks.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 5 -->
-            <div class="day-card completed" data-week="week1" data-status="Completed">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 5</span>
-                  <span class="status-badge completed"><i class="fa-solid fa-circle-check"></i> Completed</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Communication & CSR Basics</h4>
-                  <ul class="lesson-tags">
-                    <li>English 101</li>
-                    <li>Insurance CSR</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">100%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar-check"></i> July 21, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <h5><i class="fa-solid fa-clipboard"></i> Trainer Remarks:</h5>
-                  <p>English communication skills are top tier. Mock CSR phone call handling went very smoothly.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- WEEK 2 -->
-            <div class="week-heading-divider" data-week="week2">
-              <span><i class="fa-solid fa-cubes"></i> WEEK 2: Personal Lines & Quoting Simulations</span>
-            </div>
-
-            <!-- Day 6 -->
-            <div class="day-card completed" data-week="week2" data-status="Completed">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 6</span>
-                  <span class="status-badge completed"><i class="fa-solid fa-circle-check"></i> Completed</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Home Insurance Deep Dive</h4>
-                  <ul class="lesson-tags">
-                    <li>Home Insurance Types</li>
-                    <li>Coverages in Home Insurance</li>
-                    <li>Home Construction Knowledge</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">100%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar-check"></i> July 24, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <h5><i class="fa-solid fa-clipboard"></i> Trainer Remarks:</h5>
-                  <p>Solid grasp on dwelling versus personal property coverages. Scored 94% on Home Insurance quiz.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 7 -->
-            <div class="day-card completed" data-week="week2" data-status="Completed">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 7</span>
-                  <span class="status-badge completed"><i class="fa-solid fa-circle-check"></i> Completed</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Auto Insurance & Quoting Prep</h4>
-                  <ul class="lesson-tags">
-                    <li>Introduction to Auto Insurance</li>
-                    <li>Common Insurance Fields</li>
-                    <li>Home and Auto Quoting</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">100%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar-check"></i> July 25, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <h5><i class="fa-solid fa-clipboard"></i> Trainer Remarks:</h5>
-                  <p>Understands liability limits, collision, and comprehensive coverage details effortlessly.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 8 (Current) -->
-            <div class="day-card in-progress" data-week="week2" data-status="In Progress">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 8</span>
-                  <span class="status-badge active"><i class="fa-solid fa-spinner fa-spin"></i> In Progress</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Quote Simulations & Dec Page Analysis</h4>
-                  <ul class="lesson-tags">
-                    <li>Analyzing Sample Home Dec Page</li>
-                    <li>Home Quote Simulation</li>
-                    <li>Auto Quote Simulation</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">50%</div>
-                  <span class="comp-date"><i class="fa-solid fa-clock"></i> Active Today</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body" style="display: block;">
-                <div class="body-inner">
-                  <h5><i class="fa-solid fa-clipboard"></i> Trainer Remarks:</h5>
-                  <p>John demonstrated excellent understanding of Home Insurance. Needs additional practice with replacement cost calculations during auto/home simulations.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 9 -->
-            <div class="day-card pending" data-week="week2" data-status="Pending">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 9</span>
-                  <span class="status-badge pending"><i class="fa-regular fa-hourglass"></i> Pending</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Specialty Lines & Umbrella</h4>
-                  <ul class="lesson-tags">
-                    <li>Trailer Overview</li>
-                    <li>Boat & RV Overview</li>
-                    <li>Umbrella Insurance</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">0%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar"></i> July 29, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <p>Lessons upcoming for Day 9.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 10 -->
-            <div class="day-card pending" data-week="week2" data-status="Pending">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 10</span>
-                  <span class="status-badge pending"><i class="fa-regular fa-hourglass"></i> Pending</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Agency Management & Systems</h4>
-                  <ul class="lesson-tags">
-                    <li>AMS</li>
-                    <li>CRM</li>
-                    <li>Raters</li>
-                    <li>Carriers</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">0%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar"></i> July 30, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <p>Lessons upcoming for Day 10.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- WEEK 3 -->
-            <div class="week-heading-divider" data-week="week3">
-              <span><i class="fa-solid fa-cubes"></i> WEEK 3: Commercial Lines & Final Evaluations</span>
-            </div>
-
-            <!-- Day 11 -->
-            <div class="day-card pending" data-week="week3" data-status="Pending">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 11</span>
-                  <span class="status-badge pending"><i class="fa-regular fa-hourglass"></i> Pending</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Commercial & ACORD Forms</h4>
-                  <ul class="lesson-tags">
-                    <li>Personal and Commercial Insurance</li>
-                    <li>ACORD Forms</li>
-                    <li>SOP</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">0%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar"></i> August 2, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <p>Lessons upcoming for Day 11.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 12 -->
-            <div class="day-card pending" data-week="week3" data-status="Pending">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 12</span>
-                  <span class="status-badge pending"><i class="fa-regular fa-hourglass"></i> Pending</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Comprehensive Tests & Review</h4>
-                  <ul class="lesson-tags">
-                    <li>Personal Test & Review</li>
-                    <li>Commercial Test & Review</li>
-                    <li>Lava U</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">0%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar"></i> August 3, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <p>Lessons upcoming for Day 12.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 13 -->
-            <div class="day-card pending" data-week="week3" data-status="Pending">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 13</span>
-                  <span class="status-badge pending"><i class="fa-regular fa-hourglass"></i> Pending</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Insurance Final Exam</h4>
-                  <ul class="lesson-tags">
-                    <li>Insurance Final Exam</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">0%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar"></i> August 4, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <p>Lessons upcoming for Day 13.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 14 -->
-            <div class="day-card pending" data-week="week3" data-status="Pending">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 14</span>
-                  <span class="status-badge pending"><i class="fa-regular fa-hourglass"></i> Pending</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Lava U Completion</h4>
-                  <ul class="lesson-tags">
-                    <li>Lava U Completion</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">0%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar"></i> August 5, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <p>Lessons upcoming for Day 14.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Day 15 -->
-            <div class="day-card pending" data-week="week3" data-status="Pending">
-              <div class="day-card-header">
-                <div class="day-badge-col">
-                  <span class="day-num">Day 15</span>
-                  <span class="status-badge pending"><i class="fa-regular fa-hourglass"></i> Pending</span>
-                </div>
-                <div class="day-title-col">
-                  <h4>Graduation & Recognition</h4>
-                  <ul class="lesson-tags">
-                    <li>Recognition Ceremony</li>
-                    <li>Certificate</li>
-                  </ul>
-                </div>
-                <div class="day-meta-col">
-                  <div class="pct-ring">0%</div>
-                  <span class="comp-date"><i class="fa-regular fa-calendar"></i> August 6, 2026</span>
-                  <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </div>
-              </div>
-              <div class="day-card-body">
-                <div class="body-inner">
-                  <p>Lessons upcoming for Day 15.</p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- 3. DAILY PROGRESS TIMELINE TAB -->
-        <section id="tab-timeline" class="tab-content">
-          <div class="section-title-bar">
-            <h2>Daily Progress Timeline</h2>
-            <p>Visual step-by-step track of John's daily journey.</p>
-          </div>
-
-          <div class="timeline-container">
-            <div class="timeline-item completed">
-              <div class="timeline-marker"><i class="fa-solid fa-check"></i></div>
-              <div class="timeline-content">
-                <span class="timeline-date">Day 1</span>
-                <h3>HR & Orientation Complete</h3>
-                <p>Contract signed, onboarding meeting wrapped up successfully.</p>
-                <span class="status-tag green">Completed</span>
-              </div>
-            </div>
-
-            <div class="timeline-item completed">
-              <div class="timeline-marker"><i class="fa-solid fa-check"></i></div>
-              <div class="timeline-content">
-                <span class="timeline-date">Day 2</span>
-                <h3>Work Ethics & Lava U Setup</h3>
-                <p>Standard operating ethics review and initial Lava U profile creation.</p>
-                <span class="status-tag green">Completed</span>
-              </div>
-            </div>
-
-            <div class="timeline-item completed">
-              <div class="timeline-marker"><i class="fa-solid fa-check"></i></div>
-              <div class="timeline-content">
-                <span class="timeline-date">Day 3</span>
-                <h3>Insurance 101 Passed</h3>
-                <p>Scored 95% on Insurance 101 foundational evaluation.</p>
-                <span class="status-tag green">Completed</span>
-              </div>
-            </div>
-
-            <div class="timeline-item active">
-              <div class="timeline-marker"><i class="fa-solid fa-spinner fa-spin"></i></div>
-              <div class="timeline-content">
-                <span class="timeline-date">Day 8 (Current)</span>
-                <h3>Quote Simulations</h3>
-                <p>Practicing home and auto quotes in sandbox systems.</p>
-                <span class="status-tag red">Active Now</span>
-              </div>
-            </div>
-
-            <div class="timeline-item upcoming">
-              <div class="timeline-marker"><i class="fa-solid fa-hourglass-start"></i></div>
-              <div class="timeline-content">
-                <span class="timeline-date">Day 9 - Day 15</span>
-                <h3>Commercial Lines & Graduation</h3>
-                <p>Upcoming modules for commercial forms, final exam, and certificate ceremony.</p>
-                <span class="status-tag gray">Upcoming</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 4. QUIZ SCORES TAB -->
-        <section id="tab-quizzes" class="tab-content">
-          <div class="section-title-bar">
-            <h2>Quiz Scores & Evaluations</h2>
-            <p>Interactive breakdown of completed assessments and exam scores.</p>
-          </div>
-
-          <div class="quiz-grid">
-            <!-- Quiz Card 1 -->
-            <div class="quiz-card">
-              <div class="quiz-circle-wrapper">
-                <svg class="circular-chart red-circle" viewBox="0 0 36 36">
-                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <path class="circle" stroke-dasharray="95, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <text x="18" y="20.35" class="percentage">95%</text>
-                </svg>
-              </div>
-              <div class="quiz-info">
-                <h3>Insurance 101</h3>
-                <p>Passed with Distinction</p>
-                <span class="quiz-date"><i class="fa-regular fa-calendar"></i> July 19, 2026</span>
-              </div>
-            </div>
-
-            <!-- Quiz Card 2 -->
-            <div class="quiz-card">
-              <div class="quiz-circle-wrapper">
-                <svg class="circular-chart red-circle" viewBox="0 0 36 36">
-                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <path class="circle" stroke-dasharray="92, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <text x="18" y="20.35" class="percentage">92%</text>
-                </svg>
-              </div>
-              <div class="quiz-info">
-                <h3>English 101</h3>
-                <p>Passed - High Proficiency</p>
-                <span class="quiz-date"><i class="fa-regular fa-calendar"></i> July 21, 2026</span>
-              </div>
-            </div>
-
-            <!-- Quiz Card 3 -->
-            <div class="quiz-card">
-              <div class="quiz-circle-wrapper">
-                <svg class="circular-chart red-circle" viewBox="0 0 36 36">
-                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <path class="circle" stroke-dasharray="96, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <text x="18" y="20.35" class="percentage">96%</text>
-                </svg>
-              </div>
-              <div class="quiz-info">
-                <h3>Policy Cycle</h3>
-                <p>Passed - Excellent</p>
-                <span class="quiz-date"><i class="fa-regular fa-calendar"></i> July 22, 2026</span>
-              </div>
-            </div>
-
-            <!-- Quiz Card 4 -->
-            <div class="quiz-card">
-              <div class="quiz-circle-wrapper">
-                <svg class="circular-chart red-circle" viewBox="0 0 36 36">
-                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <path class="circle" stroke-dasharray="94, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <text x="18" y="20.35" class="percentage">94%</text>
-                </svg>
-              </div>
-              <div class="quiz-info">
-                <h3>Home Insurance</h3>
-                <p>Passed - Very Good</p>
-                <span class="quiz-date"><i class="fa-regular fa-calendar"></i> July 24, 2026</span>
-              </div>
-            </div>
-
-            <!-- Quiz Card 5 -->
-            <div class="quiz-card">
-              <div class="quiz-circle-wrapper">
-                <svg class="circular-chart red-circle" viewBox="0 0 36 36">
-                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <path class="circle" stroke-dasharray="90, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <text x="18" y="20.35" class="percentage">90%</text>
-                </svg>
-              </div>
-              <div class="quiz-info">
-                <h3>Auto Insurance</h3>
-                <p>Passed - Good</p>
-                <span class="quiz-date"><i class="fa-regular fa-calendar"></i> July 25, 2026</span>
-              </div>
-            </div>
-
-            <!-- Quiz Card 6 (Pending) -->
-            <div class="quiz-card pending">
-              <div class="quiz-circle-wrapper">
-                <svg class="circular-chart gray-circle" viewBox="0 0 36 36">
-                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                  <text x="18" y="20.35" class="percentage font-small">Pending</text>
-                </svg>
-              </div>
-              <div class="quiz-info">
-                <h3>Final Exam</h3>
-                <p>Scheduled for Day 13</p>
-                <span class="quiz-date"><i class="fa-regular fa-calendar"></i> August 4, 2026</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 5. ATTENDANCE TAB -->
-        <section id="tab-attendance" class="tab-content">
-          <div class="section-title-bar">
-            <h2>Attendance Record</h2>
-            <p>Daily log of punctuality and presence.</p>
-          </div>
-
-          <div class="attendance-wrapper">
-            <div class="attendance-summary">
-              <div class="att-card">
-                <span class="att-num green">8</span>
-                <span class="att-label"><i class="fa-solid fa-user-check"></i> Present Days</span>
-              </div>
-              <div class="att-card">
-                <span class="att-num yellow">0</span>
-                <span class="att-label"><i class="fa-solid fa-clock"></i> Late Days</span>
-              </div>
-              <div class="att-card">
-                <span class="att-num red">0</span>
-                <span class="att-label"><i class="fa-solid fa-user-xmark"></i> Absent Days</span>
-              </div>
-              <div class="att-card highlight">
-                <span class="att-num">100%</span>
-                <span class="att-label">Attendance Score</span>
-              </div>
-            </div>
-
-            <div class="table-responsive">
-              <table class="styled-table">
-                <thead>
-                  <tr>
-                    <th>Day</th>
-                    <th>Date</th>
-                    <th>Time In</th>
-                    <th>Time Out</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Day 1</td>
-                    <td>July 17, 2026</td>
-                    <td>08:00 AM</td>
-                    <td>05:00 PM</td>
-                    <td><span class="badge-status present">Present</span></td>
-                  </tr>
-                  <tr>
-                    <td>Day 2</td>
-                    <td>July 18, 2026</td>
-                    <td>07:58 AM</td>
-                    <td>05:02 PM</td>
-                    <td><span class="badge-status present">Present</span></td>
-                  </tr>
-                  <tr>
-                    <td>Day 3</td>
-                    <td>July 19, 2026</td>
-                    <td>08:00 AM</td>
-                    <td>05:00 PM</td>
-                    <td><span class="badge-status present">Present</span></td>
-                  </tr>
-                  <tr>
-                    <td>Day 4</td>
-                    <td>July 20, 2026</td>
-                    <td>07:55 AM</td>
-                    <td>05:01 PM</td>
-                    <td><span class="badge-status present">Present</span></td>
-                  </tr>
-                  <tr>
-                    <td>Day 5</td>
-                    <td>July 21, 2026</td>
-                    <td>08:00 AM</td>
-                    <td>05:00 PM</td>
-                    <td><span class="badge-status present">Present</span></td>
-                  </tr>
-                  <tr>
-                    <td>Day 6</td>
-                    <td>July 24, 2026</td>
-                    <td>07:59 AM</td>
-                    <td>05:03 PM</td>
-                    <td><span class="badge-status present">Present</span></td>
-                  </tr>
-                  <tr>
-                    <td>Day 7</td>
-                    <td>July 25, 2026</td>
-                    <td>08:00 AM</td>
-                    <td>05:00 PM</td>
-                    <td><span class="badge-status present">Present</span></td>
-                  </tr>
-                  <tr>
-                    <td>Day 8</td>
-                    <td>July 28, 2026</td>
-                    <td>07:56 AM</td>
-                    <td>Active</td>
-                    <td><span class="badge-status present">Present</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- 6. TRAINER NOTES TAB -->
-        <section id="tab-trainer-notes" class="tab-content">
-          <div class="section-title-bar">
-            <h2>Trainer Evaluations & Notes</h2>
-            <p>Feedback logs provided by Sarah Connor.</p>
-          </div>
-
-          <div class="notes-feed">
-            <div class="note-card-detailed">
-              <div class="note-header">
-                <div class="trainer-avatar-box">
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Trainer Avatar">
-                  <div>
-                    <h4>Sarah Connor</h4>
-                    <small>Senior Insurance Trainer</small>
-                  </div>
-                </div>
-                <div class="day-tag">Day 8 Evaluation</div>
-              </div>
-              <div class="note-body">
-                <p><strong>Observation:</strong> John demonstrated excellent understanding of Home Insurance during today's session. Needs additional practice with replacement cost calculations for multi-family structures.</p>
-                <div class="metrics-grid">
-                  <div class="metric-pill">
-                    <span class="label">Participation:</span>
-                    <span class="value green">Excellent</span>
-                  </div>
-                  <div class="metric-pill">
-                    <span class="label">Communication:</span>
-                    <span class="value green">Very Good</span>
-                  </div>
-                  <div class="metric-pill">
-                    <span class="label">Confidence:</span>
-                    <span class="value yellow">Improving</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="note-card-detailed">
-              <div class="note-header">
-                <div class="trainer-avatar-box">
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Trainer Avatar">
-                  <div>
-                    <h4>Sarah Connor</h4>
-                    <small>Senior Insurance Trainer</small>
-                  </div>
-                </div>
-                <div class="day-tag">Day 5 Evaluation</div>
-              </div>
-              <div class="note-body">
-                <p><strong>Observation:</strong> Outstanding phonetics and polite demeanor during mock client conversations. John grasps agency tone quickly.</p>
-                <div class="metrics-grid">
-                  <div class="metric-pill">
-                    <span class="label">Participation:</span>
-                    <span class="value green">Excellent</span>
-                  </div>
-                  <div class="metric-pill">
-                    <span class="label">Communication:</span>
-                    <span class="value green">Excellent</span>
-                  </div>
-                  <div class="metric-pill">
-                    <span class="label">Confidence:</span>
-                    <span class="value green">High</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 7. CALENDAR TAB -->
-        <section id="tab-calendar" class="tab-content">
-          <div class="section-title-bar">
-            <h2>Monthly Training Calendar</h2>
-            <p>Visual view of current, completed, and upcoming training modules.</p>
-          </div>
-
-          <div class="calendar-wrapper">
-            <div class="calendar-header">
-              <h3><i class="fa-regular fa-calendar-days"></i> July - August 2026</h3>
-              <div class="calendar-legend">
-                <span class="legend-item"><span class="legend-color green"></span> Completed</span>
-                <span class="legend-item"><span class="legend-color blue"></span> Current Day</span>
-                <span class="legend-item"><span class="legend-color gray"></span> Upcoming</span>
-              </div>
-            </div>
-            
-            <div class="calendar-grid">
-              <div class="day-name">Sun</div>
-              <div class="day-name">Mon</div>
-              <div class="day-name">Tue</div>
-              <div class="day-name">Wed</div>
-              <div class="day-name">Thu</div>
-              <div class="day-name">Fri</div>
-              <div class="day-name">Sat</div>
-
-              <!-- Days -->
-              <div class="cal-day empty"></div>
-              <div class="cal-day empty"></div>
-              <div class="cal-day empty"></div>
-              <div class="cal-day empty"></div>
-              <div class="cal-day empty"></div>
-              <div class="cal-day completed">
-                <span class="date-num">17</span>
-                <span class="event-title">Day 1</span>
-              </div>
-              <div class="cal-day completed">
-                <span class="date-num">18</span>
-                <span class="event-title">Day 2</span>
-              </div>
-
-              <div class="cal-day completed">
-                <span class="date-num">19</span>
-                <span class="event-title">Day 3</span>
-              </div>
-              <div class="cal-day completed">
-                <span class="date-num">20</span>
-                <span class="event-title">Day 4</span>
-              </div>
-              <div class="cal-day completed">
-                <span class="date-num">21</span>
-                <span class="event-title">Day 5</span>
-              </div>
-              <div class="cal-day empty"></div>
-              <div class="cal-day empty"></div>
-              <div class="cal-day completed">
-                <span class="date-num">24</span>
-                <span class="event-title">Day 6</span>
-              </div>
-              <div class="cal-day completed">
-                <span class="date-num">25</span>
-                <span class="event-title">Day 7</span>
-              </div>
-
-              <div class="cal-day current">
-                <span class="date-num">28</span>
-                <span class="event-title">Day 8 (Today)</span>
-              </div>
-              <div class="cal-day upcoming">
-                <span class="date-num">29</span>
-                <span class="event-title">Day 9</span>
-              </div>
-              <div class="cal-day upcoming">
-                <span class="date-num">30</span>
-                <span class="event-title">Day 10</span>
-              </div>
-              <div class="cal-day upcoming">
-                <span class="date-num">31</span>
-                <span class="event-title">Review</span>
-              </div>
-              <div class="cal-day upcoming">
-                <span class="date-num">Aug 2</span>
-                <span class="event-title">Day 11</span>
-              </div>
-              <div class="cal-day upcoming">
-                <span class="date-num">Aug 3</span>
-                <span class="event-title">Day 12</span>
-              </div>
-              <div class="cal-day upcoming">
-                <span class="date-num">Aug 4</span>
-                <span class="event-title">Day 13</span>
-              </div>
-
-              <div class="cal-day upcoming">
-                <span class="date-num">Aug 5</span>
-                <span class="event-title">Day 14</span>
-              </div>
-              <div class="cal-day upcoming">
-                <span class="date-num">Aug 6</span>
-                <span class="event-title">Day 15</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 8. DOCUMENTS TAB -->
-        <section id="tab-documents" class="tab-content">
-          <div class="section-title-bar">
-            <h2>Training Documents & Resources</h2>
-            <p>Downloadable files, evaluation logs, and certificates.</p>
-          </div>
-
-          <div class="docs-grid">
-            <div class="doc-card">
-              <div class="doc-icon red"><i class="fa-solid fa-file-pdf"></i></div>
-              <div class="doc-info">
-                <h4>Training Report W1</h4>
-                <p>Week 1 Comprehensive Summary</p>
-                <span class="file-size">PDF &bull; 2.4 MB</span>
-              </div>
-              <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
-            </div>
-
-            <div class="doc-card">
-              <div class="doc-icon green"><i class="fa-solid fa-file-excel"></i></div>
-              <div class="doc-info">
-                <h4>Attendance Log</h4>
-                <p>Detailed Punctuality Log</p>
-                <span class="file-size">XLSX &bull; 1.1 MB</span>
-              </div>
-              <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
-            </div>
-
-            <div class="doc-card">
-              <div class="doc-icon blue"><i class="fa-solid fa-chart-column"></i></div>
-              <div class="doc-info">
-                <h4>Quiz Results Breakdown</h4>
-                <p>All completed exam scores</p>
-                <span class="file-size">PDF &bull; 1.8 MB</span>
-              </div>
-              <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
-            </div>
-
-            <div class="doc-card">
-              <div class="doc-icon purple"><i class="fa-solid fa-clipboard-check"></i></div>
-              <div class="doc-info">
-                <h4>Weekly Progress Report</h4>
-                <p>Mid-program review</p>
-
-                <span class="file-size">PDF &bull; 3.0 MB</span>
-              </div>
-              <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
-            </div>
-
-            <div class="doc-card locked">
-              <div class="doc-icon gray"><i class="fa-solid fa-award"></i></div>
-              <div class="doc-info">
-                <h4>Certificate of Completion</h4>
-                <p>Unlocks on Day 15</p>
-                <span class="file-size">Locked</span>
-              </div>
-              <button class="download-btn disabled"><i class="fa-solid fa-lock"></i> Locked</button>
-            </div>
-
-            <div class="doc-card locked">
-              <div class="doc-icon gray"><i class="fa-solid fa-file-signature"></i></div>
-              <div class="doc-info">
-                <h4>Final Evaluation Report</h4>
-                <p>Unlocks post-graduation</p>
-                <span class="file-size">Locked</span>
-              </div>
-              <button class="download-btn disabled"><i class="fa-solid fa-lock"></i> Locked</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- 9. MESSAGES TAB -->
-        <section id="tab-messages" class="tab-content">
-          <div class="section-title-bar">
-            <h2>Classroom Announcements & Portal Chat</h2>
-            <p>Direct communication channel with your VA trainer.</p>
-          </div>
-
-          <div class="chat-container">
-            <div class="chat-header">
-              <div class="chat-user">
-                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Sarah Connor">
-                <div>
-                  <h4>Sarah Connor (Trainer)</h4>
-                  <span class="status-online"><i class="fa-solid fa-circle"></i> Active Now</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="chat-messages" id="chatMessages">
-              <div class="message-bubble system">
-                <span>Welcome to LAVA Classroom Training Portal! Here you can keep track of John's daily progression.</span>
-              </div>
-
-              <div class="message-bubble incoming">
-                <p>Hello Sarah! John completed Day 7 auto insurance modules with impressive scores.</p>
-                <span class="msg-time">July 25, 04:30 PM</span>
-              </div>
-
-              <div class="message-bubble outgoing">
-                <p>That's right! Quiz results have been uploaded to the portal as well.</p>
-                <span class="msg-time">July 25, 04:35 PM</span>
-              </div>
-
-              <div class="message-bubble incoming">
-                <p>John added new feedback for today's Day 8 Home Quote simulation.</p>
-                <span class="msg-time">July 28, 10:15 AM</span>
-              </div>
-            </div>
-
-            <div class="chat-input-area">
-              <input type="text" id="chatInput" placeholder="Type a message or response to trainer...">
-              <button class="send-btn" id="sendMessageBtn"><i class="fa-solid fa-paper-plane"></i> Send</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- 10. PROFILE TAB -->
-        <section id="tab-profile" class="tab-content">
-          <div class="section-title-bar">
-            <h2>Client & Assignment Profile</h2>
-            <p>Overview of client, agency, assigned VA, and training schedules.</p>
-          </div>
-
-          <div class="profile-card">
-            <div class="profile-grid">
-              <div class="profile-item">
-                <label>Client Name</label>
-                <p>Sarah Jenkins</p>
-              </div>
-              <div class="profile-item">
-                <label>Insurance Agency</label>
-                <p>Apex Insurance Agency</p>
-              </div>
-              <div class="profile-item">
-                <label>Assigned VA</label>
-                <p>John Doe</p>
-              </div>
-              <div class="profile-item">
-                <label>Lead Trainer</label>
-                <p>Sarah Connor</p>
-              </div>
-              <div class="profile-item">
-                <label>Client Email</label>
-                <p>s.jenkins@apexinsurance.com</p>
-              </div>
-              <div class="profile-item">
-                <label>Contact Phone</label>
-                <p>+1 (555) 019-2834</p>
-              </div>
-              <div class="profile-item">
-                <label>Training Start Date</label>
-                <p>July 17, 2026</p>
-              </div>
-              <div class="profile-item">
-                <label>Expected Graduation Date</label>
-                <p>August 15, 2026</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      </div> <!-- /tab-content-container -->
-
-      <!-- FOOTER -->
-      <footer class="app-footer">
-        <div class="footer-brand">
-          <strong>LAVA Classroom</strong> &bull; Training Portal
+        <!-- Day 4 -->
+        <div class="day-cell completed" onclick="openModal('Day 4', 'Insurance Documents & Admin', 'Completed', 'July 20, 2026', 'Insurance Documents, Admin Tasks, Lava U', 'Handled document indexing simulations with zero errors.')">
+          <span class="day-number">20</span>
+          <div class="event-badge">Day 4 &bull; Admin</div>
         </div>
-        <div class="footer-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Support</a>
-        </div>
-        <div class="footer-copy">
-          &copy; 2026 LAVA Classroom. All rights reserved.
-        </div>
-      </footer>
 
-    </main>
+        <!-- Day 5 -->
+        <div class="day-cell completed" onclick="openModal('Day 5', 'English 101 & CSR Basics', 'Completed', 'July 21, 2026', 'English 101, Insurance CSR Basics, Lava U', 'Mock CSR call handling went smoothly.')">
+          <span class="day-number">21</span>
+          <div class="event-badge">Day 5 &bull; CSR</div>
+        </div>
+
+        <!-- Weekend -->
+        <div class="day-cell empty"></div>
+        <div class="day-cell empty"></div>
+
+        <!-- Day 6 -->
+        <div class="day-cell completed" onclick="openModal('Day 6', 'Home Insurance Deep Dive', 'Completed', 'July 24, 2026', 'Home Types, Coverages, Construction Knowledge', 'Scored 94% on Home Insurance Quiz.')">
+          <span class="day-number">24</span>
+          <div class="event-badge">Day 6 &bull; Home</div>
+        </div>
+
+        <!-- Day 7 -->
+        <div class="day-cell completed" onclick="openModal('Day 7', 'Auto Insurance & Fields', 'Completed', 'July 25, 2026', 'Auto Insurance Intro, Common Fields, Quoting', 'Grasped liability limits and collision details.')">
+          <span class="day-number">25</span>
+          <div class="event-badge">Day 7 &bull; Auto</div>
+        </div>
+
+        <!-- Day 8 (Current) -->
+        <div class="day-cell current" onclick="openModal('Day 8 (Active Today)', 'Quote Simulations & Dec Page', 'In Progress', 'July 28, 2026', 'Sample Home Dec Page Analysis, Home & Auto Quote Simulations', 'John showed strong understanding of Home Insurance. Practice needed on replacement cost calculations.')">
+          <span class="day-number">28</span>
+          <div class="event-badge">Day 8 &bull; Active</div>
+        </div>
+
+        <!-- Day 9 -->
+        <div class="day-cell upcoming" onclick="openModal('Day 9', 'Specialty Lines & Umbrella', 'Upcoming', 'July 29, 2026', 'Trailer, Boat & RV Overview, Umbrella Insurance', 'Upcoming lesson tomorrow.')">
+          <span class="day-number">29</span>
+          <div class="event-badge">Day 9 &bull; Specialty</div>
+        </div>
+
+        <!-- Day 10 -->
+        <div class="day-cell upcoming" onclick="openModal('Day 10', 'AMS, CRM & Carriers', 'Upcoming', 'July 30, 2026', 'AMS, CRM, Raters, Carrier Portals, Lava U', 'Scheduled for Thursday.')">
+          <span class="day-number">30</span>
+          <div class="event-badge">Day 10 &bull; Systems</div>
+        </div>
+
+        <!-- Review Day -->
+        <div class="day-cell upcoming" onclick="openModal('Week 2 Review', 'End of Week Practice', 'Upcoming', 'July 31, 2026', 'System practice and instructor Q&A', 'Catch-up & review session.')">
+          <span class="day-number">31</span>
+          <div class="event-badge">Review Day</div>
+        </div>
+
+        <!-- Weekend -->
+        <div class="day-cell empty"></div>
+
+        <!-- Aug Days -->
+        <div class="day-cell upcoming" onclick="openModal('Day 11', 'Commercial Lines & ACORD', 'Upcoming', 'August 2, 2026', 'Commercial Insurance, ACORD Forms, SOPs', 'Upcoming module.')">
+          <span class="day-number">Aug 2</span>
+          <div class="event-badge">Day 11 &bull; ACORD</div>
+        </div>
+
+        <div class="day-cell upcoming" onclick="openModal('Day 12', 'Comprehensive Review', 'Upcoming', 'August 3, 2026', 'Personal & Commercial Test Reviews', 'Upcoming module.')">
+          <span class="day-number">Aug 3</span>
+          <div class="event-badge">Day 12 &bull; Review</div>
+        </div>
+
+        <div class="day-cell upcoming" onclick="openModal('Day 13', 'Insurance Final Exam', 'Upcoming', 'August 4, 2026', 'Final Evaluation Exam', 'Upcoming module.')">
+          <span class="day-number">Aug 4</span>
+          <div class="event-badge">Day 13 &bull; Exam</div>
+        </div>
+
+        <div class="day-cell upcoming" onclick="openModal('Day 14', 'Lava U Completion', 'Upcoming', 'August 5, 2026', 'Final Certificate Submissions', 'Upcoming module.')">
+          <span class="day-number">Aug 5</span>
+          <div class="event-badge">Day 14 &bull; Lava U</div>
+        </div>
+
+        <div class="day-cell upcoming" onclick="openModal('Day 15', 'Recognition & Graduation', 'Upcoming', 'August 6, 2026', 'Recognition Ceremony & Certificate Awarding', 'Graduation Day!')">
+          <span class="day-number">Aug 6</span>
+          <div class="event-badge">Day 15 &bull; Grad!</div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Custom JavaScript -->
-  <script src="script.js"></script>
+  <!-- POPUP MODAL FOR LESSON DETAILS -->
+  <div class="modal-overlay" id="dayModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      <span class="modal-header-tag" id="modalTag">Day 8</span>
+      <h3 class="modal-title" id="modalTitle">Quote Simulations</h3>
+      
+      <ul class="modal-detail-list">
+        <li><i class="fa-regular fa-circle-check"></i> <strong>Status:</strong> <span id="modalStatus">In Progress</span></li>
+        <li><i class="fa-regular fa-calendar"></i> <strong>Scheduled Date:</strong> <span id="modalDate">July 28, 2026</span></li>
+        <li><i class="fa-solid fa-book-open"></i> <strong>Modules:</strong> <span id="modalLessons">Home & Auto Quotes</span></li>
+      </ul>
+
+      <div class="trainer-notes-box">
+        <strong><i class="fa-solid fa-clipboard-user"></i> Trainer Remark:</strong>
+        <p id="modalNotes">John demonstrated excellent understanding of Home Insurance.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openModal(tag, title, status, date, lessons, notes) {
+      document.getElementById('modalTag').innerText = tag;
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalStatus').innerText = status;
+      document.getElementById('modalDate').innerText = date;
+      document.getElementById('modalLessons').innerText = lessons;
+      document.getElementById('modalNotes').innerText = notes;
+      
+      document.getElementById('dayModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('dayModal').style.display = 'none';
+    }
+
+    // Close on backdrop click
+    window.onclick = function(e) {
+      const modal = document.getElementById('dayModal');
+      if (e.target === modal) {
+        closeModal();
+      }
+    }
+  </script>
 </body>
 </html>
