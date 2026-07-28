@@ -47,16 +47,16 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 30px 20px;
+      padding: 24px 20px;
     }
 
     .presentation-container {
       width: 100%;
-      max-width: 1450px;
+      max-width: 1480px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
     /* TOP HEADER BRANDING */
@@ -64,7 +64,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 10px 0 10px;
+      padding: 0 10px;
     }
 
     .brand-logo {
@@ -104,16 +104,108 @@
     }
 
     .main-heading {
-      font-size: 36px;
+      font-size: 34px;
       font-weight: 900;
       letter-spacing: 1px;
       text-transform: uppercase;
-      text-align: center;
-      flex: 1;
+      text-align: right;
     }
 
     .main-heading span {
       color: var(--lava-red);
+    }
+
+    /* VA & AGENCY PROFILE BANNER */
+    .profile-banner {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .agency-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .agency-icon-box {
+      width: 44px;
+      height: 44px;
+      background: rgba(209, 0, 0, 0.2);
+      border: 1px solid var(--lava-red);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--lava-red);
+      font-size: 20px;
+    }
+
+    .agency-details label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9CA3AF;
+      display: block;
+    }
+
+    .agency-details h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.1;
+    }
+
+    .va-profile-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .va-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--lava-red);
+      box-shadow: 0 0 12px rgba(209, 0, 0, 0.4);
+    }
+
+    .va-info label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9CA3AF;
+      display: block;
+    }
+
+    .va-info h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.1;
+    }
+
+    .va-status-tag {
+      background: var(--lava-red);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     /* MAIN TABLE CARD */
@@ -243,7 +335,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 14px;
+      padding: 6px 14px;
       flex-wrap: wrap;
       gap: 16px;
     }
@@ -375,6 +467,37 @@
 
       <h1 class="main-heading">3-Week <span>Training Schedule</span></h1>
     </header>
+
+    <!-- CLIENT AGENCY & VA PROFILE BANNER -->
+    <section class="profile-banner">
+      <!-- Agency Information -->
+      <div class="agency-box">
+        <div class="agency-icon-box">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div class="agency-details">
+          <label>Insurance Agency</label>
+          <!-- CHANGE AGENCY NAME HERE -->
+          <h2 id="agencyNameText">Apex Insurance Agency</h2>
+        </div>
+      </div>
+
+      <!-- VA Profile Information -->
+      <div class="va-profile-box">
+        <!-- CHANGE VA PROFILE PHOTO URL HERE -->
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="VA Photo" class="va-avatar">
+        
+        <div class="va-info">
+          <label>Assigned Virtual Assistant</label>
+          <!-- CHANGE VA FIRST NAME & LAST NAME HERE -->
+          <h2 id="vaFullNameText">John Doe</h2>
+        </div>
+
+        <div class="va-status-tag">
+          <i class="fa-solid fa-circle-play"></i> Active: Day 8 of 15
+        </div>
+      </div>
+    </section>
 
     <!-- SCHEDULE MATRIX TABLE -->
     <div class="table-container">
