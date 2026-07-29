@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LAVA Automation – Client Presentation Customizer</title>
+  <title>LAVA Automation – Multi-VA Training Schedule Portal</title>
   
   <!-- Fonts & FontAwesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,114 +46,67 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding: 24px 20px;
     }
 
-    /* CUSTOMIZER CONTROL PANEL */
-    .customizer-panel {
+    .portal-wrapper {
       width: 100%;
-      max-width: 1480px;
+      max-width: 1520px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* TOP GLOBAL CONTROLLER BAR */
+    .global-toolbar {
       background: rgba(26, 4, 7, 0.9);
       backdrop-filter: blur(16px);
       border: 1px solid rgba(209, 0, 0, 0.4);
       border-radius: 16px;
       padding: 16px 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(209, 0, 0, 0.2);
-      transition: all 0.3s ease;
-    }
-
-    .customizer-panel.hidden {
-      display: none;
-    }
-
-    .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     }
 
-    .panel-header h3 {
-      font-size: 14px;
+    .global-toolbar.hidden {
+      display: none;
+    }
+
+    .toolbar-title {
+      font-size: 15px;
       font-weight: 800;
       letter-spacing: 1px;
       text-transform: uppercase;
       color: var(--lava-red);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .controls-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-
-    .input-group {
+    .toolbar-actions {
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .input-group label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #D1D5DB;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-    }
-
-    .input-field {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: #FFFFFF;
-      font-size: 13px;
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    .input-field:focus {
-      border-color: var(--lava-red);
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    select.input-field {
-      cursor: pointer;
-    }
-
-    select.input-field option {
-      background: #1A0407;
-      color: #FFFFFF;
-    }
-
-    .toggle-checkbox {
-      cursor: pointer;
-      accent-color: var(--lava-red);
+      gap: 12px;
     }
 
     .btn-action {
       background: var(--lava-red);
       color: #FFFFFF;
       border: none;
-      padding: 9px 16px;
+      padding: 10px 18px;
       border-radius: 8px;
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -184,16 +137,7 @@
       display: none;
     }
 
-    .presentation-container {
-      width: 100%;
-      max-width: 1480px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* TOP HEADER BRANDING */
+    /* HEADER BRANDING */
     .header-bar {
       display: flex;
       justify-content: space-between;
@@ -238,7 +182,7 @@
     }
 
     .main-heading {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 900;
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -249,26 +193,99 @@
       color: var(--lava-red);
     }
 
-    /* VA & AGENCY PROFILE BANNER */
+    /* SINGLE VA CALENDAR CONTAINER BLOCK */
+    .calendar-instance {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: rgba(20, 3, 6, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* PER-CALENDAR EDITOR BAR (EDIT MODE ONLY) */
+    .instance-editor-bar {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .instance-editor-bar.hidden {
+      display: none;
+    }
+
+    .editor-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .input-field {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: #FFFFFF;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--lava-red);
+    }
+
+    select.input-field option {
+      background: #110204;
+      color: #FFFFFF;
+    }
+
+    .btn-delete-card {
+      background: rgba(209, 0, 0, 0.2);
+      border: 1px solid var(--lava-red);
+      color: #FF6B6B;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-delete-card:hover {
+      background: var(--lava-red);
+      color: #FFFFFF;
+    }
+
+    /* PROFILE BANNER */
     .profile-banner {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 14px;
-      padding: 14px 24px;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
+      flex-wrap: wrap;
     }
 
     .agency-box {
       display: flex;
       align-items: center;
       gap: 14px;
-      transition: opacity 0.2s;
     }
 
     .agency-icon-box {
@@ -304,7 +321,7 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      transition: opacity 0.2s;
+      flex-wrap: wrap;
     }
 
     .va-avatar {
@@ -332,12 +349,46 @@
       line-height: 1.1;
     }
 
+    /* BADGES */
+    .meta-badges-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .support-badge {
+      background: #1E3A8A;
+      color: #93C5FD;
+      border: 1px solid #3B82F6;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .support-badge.commercial {
+      background: #4C1D95;
+      color: #DDD6FE;
+      border-color: #8B5CF6;
+    }
+
+    .support-badge.both {
+      background: #831843;
+      color: #FBCFE8;
+      border-color: #F472B6;
+    }
+
     .va-status-tag {
       background: var(--lava-red);
       color: #FFFFFF;
       font-size: 11px;
       font-weight: 800;
-      padding: 4px 12px;
+      padding: 5px 12px;
       border-radius: 20px;
       letter-spacing: 0.5px;
       display: flex;
@@ -345,12 +396,12 @@
       gap: 6px;
     }
 
-    /* MAIN TABLE CARD */
+    /* SCHEDULE MATRIX TABLE */
     .table-container {
       background: #FFFFFF;
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(209, 0, 0, 0.2);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
@@ -582,90 +633,31 @@
       font-size: 13px;
       margin-top: 10px;
     }
-
-    /* PRINT / EXPORT OPTIMIZATIONS */
-    @media print {
-      .customizer-panel, .unhide-btn { display: none !important; }
-      body { background: #FFFFFF; color: #000000; padding: 0; }
-      .presentation-container { max-width: 100%; }
-      .profile-banner { border: 1px solid #CCCCCC; background: #FAFAFA; color: #000; }
-      .agency-details h2, .va-info h2 { color: #000000; }
-    }
   </style>
 </head>
 <body>
 
   <!-- FLOATING UNHIDE BUTTON -->
   <button class="btn-action unhide-btn" id="unhideBtn" onclick="togglePresentationMode(false)">
-    <i class="fa-solid fa-sliders"></i> Edit Customizer
+    <i class="fa-solid fa-sliders"></i> Edit Mode
   </button>
 
-  <!-- LIVE CUSTOMIZER PANEL -->
-  <aside class="customizer-panel" id="customizerPanel">
-    <div class="panel-header">
-      <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Client Customization Panel</h3>
-      <button class="btn-action btn-secondary" onclick="togglePresentationMode(true)" title="Hide editor for clean client presentation">
-        <i class="fa-solid fa-eye"></i> Presentation Mode
-      </button>
-    </div>
+  <div class="portal-wrapper">
 
-    <div class="controls-grid">
-      <!-- Agency Customizer -->
-      <div class="input-group">
-        <label for="agencyInput">
-          Agency Name
-          <input type="checkbox" id="toggleAgencyCheck" class="toggle-checkbox" checked title="Show or Hide Agency Name">
-        </label>
-        <input type="text" id="agencyInput" class="input-field" value="Apex Insurance Agency" placeholder="Enter Agency Name...">
+    <!-- GLOBAL TOOLBAR -->
+    <header class="global-toolbar" id="globalToolbar">
+      <div class="toolbar-title">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Training Schedule Manager
       </div>
-
-      <!-- VA First Name -->
-      <div class="input-group">
-        <label for="vaFirstNameInput">
-          VA First Name
-          <input type="checkbox" id="toggleVaCheck" class="toggle-checkbox" checked title="Show or Hide VA Profile">
-        </label>
-        <input type="text" id="vaFirstNameInput" class="input-field" value="John" placeholder="First Name...">
+      <div class="toolbar-actions">
+        <button class="btn-action" onclick="addNewSchedule()">
+          <i class="fa-solid fa-plus"></i> Add Another VA Calendar
+        </button>
+        <button class="btn-action btn-secondary" onclick="togglePresentationMode(true)">
+          <i class="fa-solid fa-eye"></i> Presentation Mode
+        </button>
       </div>
-
-      <!-- VA Last Name -->
-      <div class="input-group">
-        <label for="vaLastNameInput">VA Last Name</label>
-        <input type="text" id="vaLastNameInput" class="input-field" value="Doe" placeholder="Last Name...">
-      </div>
-
-      <!-- Active Training Day -->
-      <div class="input-group">
-        <label for="daySelect">Active Training Day</label>
-        <select id="daySelect" class="input-field">
-          <option value="1">Day 1 of 15</option>
-          <option value="2">Day 2 of 15</option>
-          <option value="3">Day 3 of 15</option>
-          <option value="4">Day 4 of 15</option>
-          <option value="5">Day 5 of 15</option>
-          <option value="6">Day 6 of 15</option>
-          <option value="7">Day 7 of 15</option>
-          <option value="8" selected>Day 8 of 15</option>
-          <option value="9">Day 9 of 15</option>
-          <option value="10">Day 10 of 15</option>
-          <option value="11">Day 11 of 15</option>
-          <option value="12">Day 12 of 15</option>
-          <option value="13">Day 13 of 15</option>
-          <option value="14">Day 14 of 15</option>
-          <option value="15">Day 15 of 15 (Graduation)</option>
-        </select>
-      </div>
-
-      <!-- Photo File Upload / Image URL -->
-      <div class="input-group">
-        <label for="photoFileInput">Upload VA Photo</label>
-        <input type="file" id="photoFileInput" class="input-field" accept="image/*">
-      </div>
-    </div>
-  </aside>
-
-  <!-- PRESENTATION CONTAINER -->
-  <div class="presentation-container">
+    </header>
 
     <!-- HEADER LOGO & TITLE -->
     <header class="header-bar">
@@ -680,187 +672,8 @@
       <h1 class="main-heading">3-Week <span>Training Schedule</span></h1>
     </header>
 
-    <!-- CLIENT AGENCY & VA PROFILE BANNER -->
-    <section class="profile-banner" id="profileBanner">
-      <!-- Agency Information -->
-      <div class="agency-box" id="agencyBox">
-        <div class="agency-icon-box">
-          <i class="fa-solid fa-building-shield"></i>
-        </div>
-        <div class="agency-details">
-          <label>Insurance Agency</label>
-          <h2 id="agencyDisplay">Apex Insurance Agency</h2>
-        </div>
-      </div>
-
-      <!-- VA Profile Information -->
-      <div class="va-profile-box" id="vaProfileBox">
-        <img id="vaAvatarDisplay" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="VA Photo" class="va-avatar">
-        
-        <div class="va-info">
-          <label>Assigned Virtual Assistant</label>
-          <h2 id="vaNameDisplay">John Doe</h2>
-        </div>
-
-        <div class="va-status-tag" id="vaStatusTag">
-          <i class="fa-solid fa-circle-play"></i> Active: <span id="activeDayDisplay">Day 8 of 15</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- SCHEDULE MATRIX TABLE -->
-    <div class="table-container">
-      <table class="schedule-table">
-        <thead>
-          <!-- WEEK HEADERS -->
-          <tr class="week-header-row">
-            <th style="width: 16%; background: #4A0000;">Category</th>
-            <th colspan="5">WEEK 1</th>
-            <th colspan="5">WEEK 2</th>
-            <th colspan="5">WEEK 3</th>
-          </tr>
-          <!-- DAY HEADERS -->
-          <tr class="day-header-row">
-            <th style="background: #FAFAFA;">Training Days</th>
-            <th><span class="day-name">Monday</span>Day 1</th>
-            <th><span class="day-name">Tuesday</span>Day 2</th>
-            <th><span class="day-name">Wednesday</span>Day 3</th>
-            <th><span class="day-name">Thursday</span>Day 4</th>
-            <th><span class="day-name">Friday</span>Day 5</th>
-            <th><span class="day-name">Monday</span>Day 6</th>
-            <th><span class="day-name">Tuesday</span>Day 7</th>
-            <th><span class="day-name">Wednesday</span>Day 8</th>
-            <th><span class="day-name">Thursday</span>Day 9</th>
-            <th><span class="day-name">Friday</span>Day 10</th>
-            <th><span class="day-name">Monday</span>Day 11</th>
-            <th><span class="day-name">Tuesday</span>Day 12</th>
-            <th><span class="day-name">Wednesday</span>Day 13</th>
-            <th><span class="day-name">Thursday</span>Day 14</th>
-            <th><span class="day-name">Friday</span>Day 15</th>
-          </tr>
-        </thead>
-        <tbody>
-
-          <!-- ROW 1: HR CONTRACT SIGNING -->
-          <tr>
-            <td class="category-cell category-blue">
-              <i class="fa-solid fa-users"></i>
-              <span>HR Contract Signing</span>
-            </td>
-            <td onclick="showDetails('Day 1', 'HR Contract Signing')">HR Contract Signing</td>
-            <td onclick="showDetails('Day 2', 'Getting to know you')">Getting to know you</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td onclick="showDetails('Day 6', 'Home Insurance Types')">Home Insurance Types</td>
-            <td onclick="showDetails('Day 7', 'Intro to Auto Insurance')">Intro to Auto Insurance</td>
-            <td onclick="showDetails('Day 8', 'Analyzing a Sample Home Dec Page')">Analyzing a Sample Home Dec Page</td>
-            <td onclick="showDetails('Day 9', 'Trailer Overview and Quoting')">Trailer Overview and Quoting</td>
-            <td onclick="showDetails('Day 10', 'AMS')">AMS</td>
-            <td rowspan="2" onclick="showDetails('Day 11', 'Personal/Commercial Insurance ACORD Forms')">Personal/Commercial Insurance ACORD Forms</td>
-            <td onclick="showDetails('Day 12', 'Personal Test/Review')">Personal Test/Review</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-
-          <!-- ROW 2: HR NEW HIRE ORIENTATION -->
-          <tr>
-            <td class="category-cell category-blue">
-              <i class="fa-solid fa-user-plus"></i>
-              <span>HR New Hire Orientation</span>
-            </td>
-            <td onclick="showDetails('Day 1', 'HR New Hire Orientation')">HR New Hire Orientation</td>
-            <td onclick="showDetails('Day 2', 'Different Roles of a LAVA VA')">Different Roles of a LAVA VA</td>
-            <td onclick="showDetails('Day 3', 'Insurance 101')">Insurance 101</td>
-            <td onclick="showDetails('Day 4', 'Insurance Documents')">Insurance Documents</td>
-            <td onclick="showDetails('Day 5', 'English 101')">English 101</td>
-            <td onclick="showDetails('Day 6', 'Coverages in Home Insurance')">Coverages in Home Insurance</td>
-            <td onclick="showDetails('Day 7', 'Common Fields You Will See When Quoting Home & Auto')">Common Fields You Will See When Quoting Home & Auto</td>
-            <td onclick="showDetails('Day 8', 'Analyzing a Sample Auto Dec Page')">Analyzing a Sample Auto Dec Page</td>
-            <td onclick="showDetails('Day 9', 'Boat & RV Overview and Quoting')">Boat & RV Overview and Quoting</td>
-            <td onclick="showDetails('Day 10', 'CRM')">CRM</td>
-            <td onclick="showDetails('Day 13', 'Insurance Final Exam')">Insurance Final Exam</td>
-            <td onclick="showDetails('Day 14', 'Lava U Completion')">Lava U Completion</td>
-            <td onclick="showDetails('Day 15', 'Recognition with TL\'s and Trainers (Certificate)')">Recognition with TL's and Trainers (Certificate)</td>
-          </tr>
-
-          <!-- ROW 3: INSURANCE ONBOARDING MEETING -->
-          <tr>
-            <td class="category-cell category-green">
-              <i class="fa-solid fa-shield-halved"></i>
-              <span>Insurance Onboarding Meeting</span>
-            </td>
-            <td onclick="showDetails('Day 1', 'Insurance Onboarding Meeting')">Insurance Onboarding Meeting</td>
-            <td onclick="showDetails('Day 2', 'Standard Work Ethics')">Standard Work Ethics</td>
-            <td onclick="showDetails('Day 3', 'Policy Cycle')">Policy Cycle</td>
-            <td onclick="showDetails('Day 4', 'Admin Task')">Admin Task</td>
-            <td onclick="showDetails('Day 5', 'Insurance CSR')">Insurance CSR</td>
-            <td onclick="showDetails('Day 6', 'Home Construction Knowledge')">Home Construction Knowledge</td>
-            <td onclick="showDetails('Day 7', 'Home and Auto Quoting')">Home and Auto Quoting</td>
-            <td onclick="showDetails('Day 8', 'Home & Auto Quote Simulations')">
-              Home Quote Simulation<br><br>Auto Quote Simulation
-            </td>
-            <td onclick="showDetails('Day 9', 'Umbrella Insurance')">Umbrella Insurance</td>
-            <td onclick="showDetails('Day 10', 'Raters & Carriers')">
-              Raters<br><br>Carriers
-            </td>
-            <td onclick="showDetails('Day 11', 'SOP')">SOP</td>
-            <td onclick="showDetails('Day 12', 'Commercial Summative Test/Review')">Commercial Summative Test/Review</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-
-          <!-- ROW 4: VA ONBOARDING / LAVA U -->
-          <tr class="lava-u-row">
-            <td class="category-cell category-peach">
-              <i class="fa-solid fa-headset"></i>
-              <span>Virtual Assistant Onboarding</span>
-            </td>
-            <td onclick="showDetails('Day 1', 'Lava U Setup')">Lava U</td>
-            <td onclick="showDetails('Day 2', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 3', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 4', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 5', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 6', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 7', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 8', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 9', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 10', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 11', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 12', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 13', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 14', 'Lava U Modules')">Lava U</td>
-            <td onclick="showDetails('Day 15', 'Lava U Graduation')">Lava U</td>
-          </tr>
-
-        </tbody>
-      </table>
-    </div>
-
-    <!-- FOOTER LEGEND & SLOGAN -->
-    <footer class="footer-bar">
-      <div class="lava-u-tag">
-        <div class="lava-u-badge"><i class="fa-solid fa-graduation-cap"></i></div>
-        <span>LAVA U &ndash; <em>Continuous Learning. Endless Growth.</em></span>
-      </div>
-
-      <div class="legend-container">
-        <div class="legend-item">
-          <span class="legend-dot blue"></span>
-          <span>HR & Orientation</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-dot green"></span>
-          <span>Insurance Onboarding</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-dot peach"></span>
-          <span>VA Onboarding</span>
-        </div>
-      </div>
-    </footer>
+    <!-- DYNAMIC CONTAINER WHERE VA CALENDARS ARE ADDED -->
+    <div id="schedulesContainer" style="display: flex; flex-direction: column; gap: 30px;"></div>
 
   </div>
 
@@ -877,83 +690,305 @@
   </div>
 
   <script>
-    // DOM Elements
-    const agencyInput = document.getElementById('agencyInput');
-    const vaFirstNameInput = document.getElementById('vaFirstNameInput');
-    const vaLastNameInput = document.getElementById('vaLastNameInput');
-    const daySelect = document.getElementById('daySelect');
-    const photoFileInput = document.getElementById('photoFileInput');
+    let scheduleCounter = 0;
+    let isPresentationMode = false;
 
-    const toggleAgencyCheck = document.getElementById('toggleAgencyCheck');
-    const toggleVaCheck = document.getElementById('toggleVaCheck');
+    // Default VA Sample Preset Data
+    const defaultVAs = [
+      {
+        agency: "Apex Insurance Agency",
+        firstName: "John",
+        lastName: "Doe",
+        support: "Personal Lines",
+        activeDay: "8",
+        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+      }
+    ];
 
-    const agencyDisplay = document.getElementById('agencyDisplay');
-    const vaNameDisplay = document.getElementById('vaNameDisplay');
-    const activeDayDisplay = document.getElementById('activeDayDisplay');
-    const vaAvatarDisplay = document.getElementById('vaAvatarDisplay');
-
-    const agencyBox = document.getElementById('agencyBox');
-    const vaProfileBox = document.getElementById('vaProfileBox');
-    const customizerPanel = document.getElementById('customizerPanel');
-    const unhideBtn = document.getElementById('unhideBtn');
-
-    // Live Customization Event Handlers
-    function updateAgencyName() {
-      const value = agencyInput.value.trim();
-      agencyDisplay.innerText = value.length > 0 ? value : 'Agency Name';
-    }
-
-    function updateVaName() {
-      const firstName = vaFirstNameInput.value.trim();
-      const lastName = vaLastNameInput.value.trim();
-      const fullName = `${firstName} ${lastName}`.trim();
-      vaNameDisplay.innerText = fullName.length > 0 ? fullName : 'Virtual Assistant';
-    }
-
-    function updateActiveDay() {
-      const selectedDay = daySelect.value;
-      activeDayDisplay.innerText = `Day ${selectedDay} of 15`;
-    }
-
-    // Toggle Visibility Handlers
-    toggleAgencyCheck.addEventListener('change', (e) => {
-      agencyBox.style.display = e.target.checked ? 'flex' : 'none';
+    document.addEventListener("DOMContentLoaded", () => {
+      // Initialize with default VA calendar
+      defaultVAs.forEach(va => addNewSchedule(va));
     });
 
-    toggleVaCheck.addEventListener('change', (e) => {
-      vaProfileBox.style.display = e.target.checked ? 'flex' : 'none';
-    });
+    function addNewSchedule(data = null) {
+      scheduleCounter++;
+      const id = scheduleCounter;
 
-    // Image Reader Upload
-    photoFileInput.addEventListener('change', (e) => {
+      const agency = data ? data.agency : "New Insurance Agency";
+      const firstName = data ? data.firstName : "Jane";
+      const lastName = data ? data.lastName : "Smith";
+      const support = data ? data.support : "Commercial Lines";
+      const activeDay = data ? data.activeDay : "1";
+      const photo = data ? data.photo : "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80";
+
+      const cardHTML = `
+        <div class="calendar-instance" id="schedule-card-${id}">
+          
+          <!-- EDIT CONTROLS BAR -->
+          <div class="instance-editor-bar ${isPresentationMode ? 'hidden' : ''}">
+            <div class="editor-group">
+              <span style="font-size: 11px; font-weight: 800; color: var(--lava-red); text-transform: uppercase;">
+                <i class="fa-solid fa-pen-to-square"></i> Calendar #${id} Settings:
+              </span>
+              
+              <input type="text" id="agencyInput-${id}" class="input-field" value="${agency}" placeholder="Agency Name" oninput="updateCardDisplay(${id})">
+              <input type="text" id="fnInput-${id}" class="input-field" value="${firstName}" placeholder="VA First Name" style="width: 110px;" oninput="updateCardDisplay(${id})">
+              <input type="text" id="lnInput-${id}" class="input-field" value="${lastName}" placeholder="VA Last Name" style="width: 110px;" oninput="updateCardDisplay(${id})">
+
+              <!-- INSURANCE SUPPORT DROPDOWN -->
+              <select id="supportSelect-${id}" class="input-field" onchange="updateCardDisplay(${id})">
+                <option value="Personal Lines" ${support === 'Personal Lines' ? 'selected' : ''}>Personal Lines</option>
+                <option value="Commercial Lines" ${support === 'Commercial Lines' ? 'selected' : ''}>Commercial Lines</option>
+                <option value="Personal & Commercial Lines" ${support === 'Personal & Commercial Lines' ? 'selected' : ''}>Personal & Commercial Lines</option>
+              </select>
+
+              <!-- ACTIVE DAY DROPDOWN -->
+              <select id="daySelect-${id}" class="input-field" onchange="updateCardDisplay(${id})">
+                ${Array.from({length: 15}, (_, i) => `<option value="${i+1}" ${activeDay == (i+1) ? 'selected' : ''}>Day ${i+1} of 15</option>`).join('')}
+              </select>
+
+              <!-- UPLOAD PHOTO -->
+              <input type="file" id="photoInput-${id}" class="input-field" accept="image/*" style="width: 160px;" onchange="handlePhotoUpload(event, ${id})">
+            </div>
+
+            <button class="btn-delete-card" onclick="removeSchedule(${id})">
+              <i class="fa-solid fa-trash-can"></i> Remove Calendar
+            </button>
+          </div>
+
+          <!-- PRESENTATION BANNER -->
+          <section class="profile-banner">
+            <div class="agency-box">
+              <div class="agency-icon-box">
+                <i class="fa-solid fa-building-shield"></i>
+              </div>
+              <div class="agency-details">
+                <label>Insurance Agency</label>
+                <h2 id="agencyDisplay-${id}">${agency}</h2>
+              </div>
+            </div>
+
+            <div class="va-profile-box">
+              <img id="avatarDisplay-${id}" src="${photo}" alt="VA Photo" class="va-avatar">
+              
+              <div class="va-info">
+                <label>Assigned Virtual Assistant</label>
+                <h2 id="vaNameDisplay-${id}">${firstName} ${lastName}</h2>
+              </div>
+
+              <div class="meta-badges-group">
+                <!-- INSURANCE SUPPORT BADGE -->
+                <div class="support-badge" id="supportBadge-${id}">
+                  <i class="fa-solid fa-file-contract"></i> <span id="supportBadgeText-${id}">${support}</span>
+                </div>
+
+                <!-- ACTIVE DAY BADGE -->
+                <div class="va-status-tag">
+                  <i class="fa-solid fa-circle-play"></i> Active: <span id="dayBadgeText-${id}">Day ${activeDay} of 15</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3-WEEK MATRIX TABLE -->
+          <div class="table-container">
+            <table class="schedule-table">
+              <thead>
+                <tr class="week-header-row">
+                  <th style="width: 16%; background: #4A0000;">Category</th>
+                  <th colspan="5">WEEK 1</th>
+                  <th colspan="5">WEEK 2</th>
+                  <th colspan="5">WEEK 3</th>
+                </tr>
+                <tr class="day-header-row">
+                  <th style="background: #FAFAFA;">Training Days</th>
+                  <th><span class="day-name">Monday</span>Day 1</th>
+                  <th><span class="day-name">Tuesday</span>Day 2</th>
+                  <th><span class="day-name">Wednesday</span>Day 3</th>
+                  <th><span class="day-name">Thursday</span>Day 4</th>
+                  <th><span class="day-name">Friday</span>Day 5</th>
+                  <th><span class="day-name">Monday</span>Day 6</th>
+                  <th><span class="day-name">Tuesday</span>Day 7</th>
+                  <th><span class="day-name">Wednesday</span>Day 8</th>
+                  <th><span class="day-name">Thursday</span>Day 9</th>
+                  <th><span class="day-name">Friday</span>Day 10</th>
+                  <th><span class="day-name">Monday</span>Day 11</th>
+                  <th><span class="day-name">Tuesday</span>Day 12</th>
+                  <th><span class="day-name">Wednesday</span>Day 13</th>
+                  <th><span class="day-name">Thursday</span>Day 14</th>
+                  <th><span class="day-name">Friday</span>Day 15</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="category-cell category-blue">
+                    <i class="fa-solid fa-users"></i>
+                    <span>HR Contract Signing</span>
+                  </td>
+                  <td onclick="showDetails('Day 1', 'HR Contract Signing')">HR Contract Signing</td>
+                  <td onclick="showDetails('Day 2', 'Getting to know you')">Getting to know you</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td onclick="showDetails('Day 6', 'Home Insurance Types')">Home Insurance Types</td>
+                  <td onclick="showDetails('Day 7', 'Intro to Auto Insurance')">Intro to Auto Insurance</td>
+                  <td onclick="showDetails('Day 8', 'Analyzing a Sample Home Dec Page')">Analyzing a Sample Home Dec Page</td>
+                  <td onclick="showDetails('Day 9', 'Trailer Overview and Quoting')">Trailer Overview and Quoting</td>
+                  <td onclick="showDetails('Day 10', 'AMS')">AMS</td>
+                  <td rowspan="2" onclick="showDetails('Day 11', 'Personal/Commercial Insurance ACORD Forms')">Personal/Commercial Insurance ACORD Forms</td>
+                  <td onclick="showDetails('Day 12', 'Personal Test/Review')">Personal Test/Review</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+
+                <tr>
+                  <td class="category-cell category-blue">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>HR New Hire Orientation</span>
+                  </td>
+                  <td onclick="showDetails('Day 1', 'HR New Hire Orientation')">HR New Hire Orientation</td>
+                  <td onclick="showDetails('Day 2', 'Different Roles of a LAVA VA')">Different Roles of a LAVA VA</td>
+                  <td onclick="showDetails('Day 3', 'Insurance 101')">Insurance 101</td>
+                  <td onclick="showDetails('Day 4', 'Insurance Documents')">Insurance Documents</td>
+                  <td onclick="showDetails('Day 5', 'English 101')">English 101</td>
+                  <td onclick="showDetails('Day 6', 'Coverages in Home Insurance')">Coverages in Home Insurance</td>
+                  <td onclick="showDetails('Day 7', 'Common Fields You Will See When Quoting Home & Auto')">Common Fields You Will See When Quoting Home & Auto</td>
+                  <td onclick="showDetails('Day 8', 'Analyzing a Sample Auto Dec Page')">Analyzing a Sample Auto Dec Page</td>
+                  <td onclick="showDetails('Day 9', 'Boat & RV Overview and Quoting')">Boat & RV Overview and Quoting</td>
+                  <td onclick="showDetails('Day 10', 'CRM')">CRM</td>
+                  <td onclick="showDetails('Day 13', 'Insurance Final Exam')">Insurance Final Exam</td>
+                  <td onclick="showDetails('Day 14', 'Lava U Completion')">Lava U Completion</td>
+                  <td onclick="showDetails('Day 15', 'Recognition with TL\'s and Trainers (Certificate)')">Recognition with TL's and Trainers (Certificate)</td>
+                </tr>
+
+                <tr>
+                  <td class="category-cell category-green">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Insurance Onboarding Meeting</span>
+                  </td>
+                  <td onclick="showDetails('Day 1', 'Insurance Onboarding Meeting')">Insurance Onboarding Meeting</td>
+                  <td onclick="showDetails('Day 2', 'Standard Work Ethics')">Standard Work Ethics</td>
+                  <td onclick="showDetails('Day 3', 'Policy Cycle')">Policy Cycle</td>
+                  <td onclick="showDetails('Day 4', 'Admin Task')">Admin Task</td>
+                  <td onclick="showDetails('Day 5', 'Insurance CSR')">Insurance CSR</td>
+                  <td onclick="showDetails('Day 6', 'Home Construction Knowledge')">Home Construction Knowledge</td>
+                  <td onclick="showDetails('Day 7', 'Home and Auto Quoting')">Home and Auto Quoting</td>
+                  <td onclick="showDetails('Day 8', 'Home & Auto Quote Simulations')">
+                    Home Quote Simulation<br><br>Auto Quote Simulation
+                  </td>
+                  <td onclick="showDetails('Day 9', 'Umbrella Insurance')">Umbrella Insurance</td>
+                  <td onclick="showDetails('Day 10', 'Raters & Carriers')">
+                    Raters<br><br>Carriers
+                  </td>
+                  <td onclick="showDetails('Day 11', 'SOP')">SOP</td>
+                  <td onclick="showDetails('Day 12', 'Commercial Summative Test/Review')">Commercial Summative Test/Review</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+
+                <tr class="lava-u-row">
+                  <td class="category-cell category-peach">
+                    <i class="fa-solid fa-headset"></i>
+                    <span>Virtual Assistant Onboarding</span>
+                  </td>
+                  <td onclick="showDetails('Day 1', 'Lava U Setup')">Lava U</td>
+                  <td onclick="showDetails('Day 2', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 3', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 4', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 5', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 6', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 7', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 8', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 9', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 10', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 11', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 12', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 13', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 14', 'Lava U Modules')">Lava U</td>
+                  <td onclick="showDetails('Day 15', 'Lava U Graduation')">Lava U</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <footer class="footer-bar">
+            <div class="lava-u-tag">
+              <div class="lava-u-badge"><i class="fa-solid fa-graduation-cap"></i></div>
+              <span>LAVA U &ndash; <em>Continuous Learning. Endless Growth.</em></span>
+            </div>
+
+            <div class="legend-container">
+              <div class="legend-item"><span class="legend-dot blue"></span><span>HR & Orientation</span></div>
+              <div class="legend-item"><span class="legend-dot green"></span><span>Insurance Onboarding</span></div>
+              <div class="legend-item"><span class="legend-dot peach"></span><span>VA Onboarding</span></div>
+            </div>
+          </footer>
+        </div>
+      `;
+
+      document.getElementById('schedulesContainer').insertAdjacentHTML('beforeend', cardHTML);
+      updateCardDisplay(id);
+    }
+
+    function removeSchedule(id) {
+      const card = document.getElementById(`schedule-card-${id}`);
+      if (card) {
+        card.remove();
+      }
+    }
+
+    function updateCardDisplay(id) {
+      const agencyVal = document.getElementById(`agencyInput-${id}`).value.trim() || 'Insurance Agency';
+      const fnVal = document.getElementById(`fnInput-${id}`).value.trim();
+      const lnVal = document.getElementById(`lnInput-${id}`).value.trim();
+      const supportVal = document.getElementById(`supportSelect-${id}`).value;
+      const dayVal = document.getElementById(`daySelect-${id}`).value;
+
+      document.getElementById(`agencyDisplay-${id}`).innerText = agencyVal;
+      document.getElementById(`vaNameDisplay-${id}`).innerText = `${fnVal} ${lnVal}`.trim() || 'Virtual Assistant';
+      document.getElementById(`supportBadgeText-${id}`).innerText = supportVal;
+      document.getElementById(`dayBadgeText-${id}`).innerText = `Day ${dayVal} of 15`;
+
+      // Badge Styling
+      const supportBadge = document.getElementById(`supportBadge-${id}`);
+      supportBadge.className = "support-badge";
+      if (supportVal === 'Commercial Lines') {
+        supportBadge.classList.add('commercial');
+      } else if (supportVal === 'Personal & Commercial Lines') {
+        supportBadge.classList.add('both');
+      }
+    }
+
+    function handlePhotoUpload(e, id) {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(evt) {
-          vaAvatarDisplay.src = evt.target.result;
+          document.getElementById(`avatarDisplay-${id}`).src = evt.target.result;
         };
         reader.readAsDataURL(file);
       }
-    });
+    }
 
-    // Presentation Mode Handler (Hides controls for client calls)
     function togglePresentationMode(hideControls) {
+      isPresentationMode = hideControls;
+      const toolbar = document.getElementById('globalToolbar');
+      const unhideBtn = document.getElementById('unhideBtn');
+      const editorBars = document.querySelectorAll('.instance-editor-bar');
+
       if (hideControls) {
-        customizerPanel.classList.add('hidden');
+        toolbar.classList.add('hidden');
         unhideBtn.style.display = 'flex';
+        editorBars.forEach(bar => bar.classList.add('hidden'));
       } else {
-        customizerPanel.classList.remove('hidden');
+        toolbar.classList.remove('hidden');
         unhideBtn.style.display = 'none';
+        editorBars.forEach(bar => bar.classList.remove('hidden'));
       }
     }
 
-    // Attach Input Event Listeners
-    agencyInput.addEventListener('input', updateAgencyName);
-    vaFirstNameInput.addEventListener('input', updateVaName);
-    vaLastNameInput.addEventListener('input', updateVaName);
-    daySelect.addEventListener('change', updateActiveDay);
-
-    // Modal Details Logic
     function showDetails(day, topic) {
       document.getElementById('modalDay').innerText = day;
       document.getElementById('modalTopic').innerText = topic;
